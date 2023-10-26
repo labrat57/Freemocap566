@@ -20,7 +20,17 @@ df = pd.read_csv('output_leg_file.csv', skiprows=range(1, 60), nrows=350)
 # plotting the graph
 plt.plot(df['Time'], df['speed_left_ankle_x'], label='Data')
 plt.xlabel('Time(s)')
-plt.ylabel('leg velocity(data/s)')
-plt.title('right hand wrist speed')
+plt.ylabel('leg velocity(mm/s)')
+plt.title('ankle acceleration')
+plt.legend()
+plt.show()
+
+# i want another plot but this time it will be the distance traveled by the ankle
+#i can use the data given to me to calculate the distance traveled by the ankle
+
+plt.plot(df['Time'], df['left_ankle_x'], label='Data')
+plt.xlabel('Time(s)')
+plt.ylabel('leg position (mm)')
+plt.title('ankle speed')
 plt.legend()
 plt.show()
