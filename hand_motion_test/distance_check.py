@@ -1,9 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-#coordinates_x = []
-#coordinates_y = []
-#coordinates_z = []
+
 df = pd.read_csv('wrist_movement.csv', skiprows=range(1, 820), nrows=50)  # opens file with only 1 good point of data
 
 # 1455 rows
@@ -19,7 +17,7 @@ df['Time'] = [i * time_increment for i in range(1, len(df) + 1)]
 
 # x data
 
-plt.plot(df['Time'], df['right_wrist_x'], label='Data')
+plt.plot(df['right_wrist_x'], label='Data')
 plt.xlabel('Time(s)')
 plt.ylabel('wrist position (mm)')
 plt.title('wrist position')
@@ -43,7 +41,7 @@ cid = plt.gcf().canvas.mpl_connect('button_press_event', onclick_x)
 plt.show()
 
 # y data
-plt.plot(df['Time'], df['right_wrist_y'], label='Data')
+plt.plot(df['right_wrist_y'], label='Data')
 plt.xlabel('Time(s)')
 plt.ylabel('wrist position (mm)')
 plt.title('wrist position')
@@ -67,7 +65,7 @@ cid = plt.gcf().canvas.mpl_connect('button_press_event', onclick_y)
 plt.show()
 
 # z data
-plt.plot(df['Time'], df['right_wrist_z'], label='Data')
+plt.plot(df['right_wrist_z'], label='Data')
 plt.xlabel('Time(s)')
 plt.ylabel('wrist position (mm)')
 plt.title('wrist position')
