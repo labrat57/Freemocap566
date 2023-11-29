@@ -82,7 +82,3 @@ ani = FuncAnimation(fig, func=update, frames=num_points, interval=100, blit=True
 
 plt.show()
 
-
-
-
-
