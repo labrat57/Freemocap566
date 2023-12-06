@@ -6,8 +6,12 @@ Python Version
 Dependencies:
 - matplotlib
 - pandas
+- numpy
 
 Log - code for Jer to run
+2023-11-30 tanVel.py
+                This code calculates the tangential velocity of the FreeMoCap data and the EMC data
+
 2023-11-29: EMCanimation and FMCanimation
                 the files for EMC are already in the folder ready to run
                 The fmc animation file is called recording_13_58_54... and is also in the folder already. if you want to run more freemocap files, youll have to call those in.
