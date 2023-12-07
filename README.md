@@ -7,8 +7,12 @@ Dependencies:
 - matplotlib
 - pandas
 - numpy
+- from scipy.signal import butter, filtfilt
 
 Log - code for Jer to run
+2023-12-06 reachTask\tangentialVelReach.py
+            this code now works to get the TanVel of the reaching data i collected on monday. The output is in m/s
+            also added the freemocapAnalysis.py file for all the functionc from now on
 2023-11-30 tanVel.py
                 This code calculates the tangential velocity of the FreeMoCap data and the EMC data
 

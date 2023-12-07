@@ -26,9 +26,9 @@ def tanVel(fmc):
 
     # velocity of points
     for part in body_parts:
-        fmc[f'right_{part}_velocity_x'] = fmc[f'right_{part}_delta_x'] / fmc['time_interval']
-        fmc[f'right_{part}_velocity_y'] = fmc[f'right_{part}_delta_y'] / fmc['time_interval']
-        fmc[f'right_{part}_velocity_z'] = fmc[f'right_{part}_delta_z'] / fmc['time_interval']
+        fmc[f'right_{part}_velocity_x'] = fmc[f'right_{part}_delta_x'] / fmc['time_interval'] / 1000
+        fmc[f'right_{part}_velocity_y'] = fmc[f'right_{part}_delta_y'] / fmc['time_interval'] / 1000
+        fmc[f'right_{part}_velocity_z'] = fmc[f'right_{part}_delta_z'] / fmc['time_interval'] / 1000
 
     # tangential velocity of points
     for part in body_parts:
