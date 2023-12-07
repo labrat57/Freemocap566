@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import butter, filtfilt
 
 
-def tanVel(fmc):
+def tanVel(fmc:pd.DataFrame):
     # freemocap data
     body_parts = ['wrist', 'elbow', 'shoulder']
 
@@ -15,20 +15,19 @@ def tanVel(fmc):
         fmc[f'right_{part}_delta_y'] = fmc[f'right_{part}_y'].diff()
         fmc[f'right_{part}_delta_z'] = fmc[f'right_{part}_z'].diff()
 
-    # Convert Unix timestamp to datetime
-    fmc['timestamp'] = pd.to_datetime(fmc['timestamp'], unit='ms')
-
-    # Calculate the time interval in seconds
-    fmc['time_interval'] = fmc['timestamp'].diff().dt.total_seconds()
-
-    # Handle the first row which will have a NaN time interval
-    fmc.loc[fmc.index[0], 'time_interval'] = fmc['time_interval'].iloc[1]
+    for part in body_parts:
+        ts = fmc['timestamp']
+        ts0 = ts - ts[0]
+        #now ts0 is in nanoseconds, conver to seconds
+        ts_sec = ts0 / 1000000000
+        #plt.plot(ts_sec)
+        fmc['time_s'] = ts_sec
 
     # velocity of points
     for part in body_parts:
-        fmc[f'right_{part}_velocity_x'] = fmc[f'right_{part}_delta_x'] / fmc['time_interval'] / 1000
-        fmc[f'right_{part}_velocity_y'] = fmc[f'right_{part}_delta_y'] / fmc['time_interval'] / 1000
-        fmc[f'right_{part}_velocity_z'] = fmc[f'right_{part}_delta_z'] / fmc['time_interval'] / 1000
+        fmc[f'right_{part}_velocity_x'] = np.gradient(fmc[f'right_{part}_x'], fmc['time_s'])
+        fmc[f'right_{part}_velocity_y'] = np.gradient(fmc[f'right_{part}_y'], fmc['time_s'])
+        fmc[f'right_{part}_velocity_z'] = np.gradient(fmc[f'right_{part}_z'], fmc['time_s'])
 
     # tangential velocity of points
     for part in body_parts:
@@ -37,6 +36,7 @@ def tanVel(fmc):
             fmc[f'right_{part}_velocity_y'] ** 2 + 
             fmc[f'right_{part}_velocity_z'] ** 2) ** 0.5
         ) 
+      
     return fmc
            
 
@@ -58,5 +58,8 @@ def butterfilter(fmc, order=4, fs=31.0, cutoff_freq=12.0):
         filtered_data = filtfilt(b, a, data_column)
         fmc[f'filtered_{column}'] = filtered_data
 
-    # Save the filtered data back to a new CSV file
-    fmc.to_csv(fmc, index=False)
+    return fmc
+    
+# add a few plotting one
+# add the animation one here
+
