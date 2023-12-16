@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import butter, filtfilt
+from matplotlib.animation import FuncAnimation
+from mpl_toolkits.mplot3d import Axes3D
 
 
 def tanVel(fmc:pd.DataFrame):
@@ -60,6 +62,43 @@ def butterfilter(fmc, order=4, fs=31.0, cutoff_freq=12.0):
 
     return fmc
     
-# add a few plotting one
+# 3d plotting of data
+def x_y_z_plot(fmc, x, y, z):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    ax.plot(fmc[x], fmc[y], fmc[z])
+    ax.set_xlabel(x)
+    ax.set_ylabel(y)
+    ax.set_zlabel(z)
+    ax.set_title(f'{x}, {y}, {z}')
+
+    plt.show()
+    return fmc
+
+
 # add the animation one here
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from mpl_toolkits.mplot3d import Axes3D
+
+def animate_3d_plot(fmc, x, y, z):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    line, = ax.plot(fmc[x], fmc[y], fmc[z])
+
+    def update(num):
+        line.set_data(fmc[x][:num], fmc[y][:num])
+        line.set_3d_properties(fmc[z][:num])
+        return line,
+
+    ani = FuncAnimation(fig, update, frames=len(fmc[x]), interval=100, blit=True)
+
+    plt.show()
+
+    return ani
+
+
+
 
