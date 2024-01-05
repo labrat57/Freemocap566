@@ -5,17 +5,35 @@ import matplotlib.pyplot as plt
 from scipy.signal import butter, filtfilt
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
+import sys
+import os
+
+def addReachPath():
+  str_path = sys.path[0]
+  sys.path.append(os.path.join(str_path,'reachTask'))
 
 
-def tanVel(fmc:pd.DataFrame):
+def setdatapath(str_who):
+  # add the path reachTask
+  # get the name of the directory containing this file:
+  if str_who == 'romeo':
+    str_datadir = "hi"
+  elif str_who == "jeremy":
+    str_datadir = "/Users/jeremy/OneDrive - University of Calgary/Freemocap 2023/freemocap_data/recording_sessions"
+  else:
+    print('unknown user name %s' % (str_who))
+  
+  sys.path.append(str_datadir)
+  return str_datadir
+
+def tan_vel(fmc:pd.DataFrame,side='right',body_parts=['wrist', 'elbow', 'shoulder']):
     # freemocap data
-    body_parts = ['wrist', 'elbow', 'shoulder']
-
+    
     # changes in distance between points
     for part in body_parts:
-        fmc[f'right_{part}_delta_x'] = fmc[f'right_{part}_x'].diff()
-        fmc[f'right_{part}_delta_y'] = fmc[f'right_{part}_y'].diff()
-        fmc[f'right_{part}_delta_z'] = fmc[f'right_{part}_z'].diff()
+        fmc[f'{side}_{part}_delta_x'] = fmc[f'right_{part}_x'].diff()
+        fmc[f'{side}_{part}_delta_y'] = fmc[f'right_{part}_y'].diff()
+        fmc[f'{side}_{part}_delta_z'] = fmc[f'right_{part}_z'].diff()
 
     for part in body_parts:
         ts = fmc['timestamp']
@@ -27,21 +45,20 @@ def tanVel(fmc:pd.DataFrame):
 
     # velocity of points
     for part in body_parts:
-        fmc[f'right_{part}_velocity_x'] = np.gradient(fmc[f'right_{part}_x'], fmc['time_s'])
-        fmc[f'right_{part}_velocity_y'] = np.gradient(fmc[f'right_{part}_y'], fmc['time_s'])
-        fmc[f'right_{part}_velocity_z'] = np.gradient(fmc[f'right_{part}_z'], fmc['time_s'])
+        fmc[f'{side}_{part}_velocity_x'] = np.gradient(fmc[f'{side}_{part}_x'], fmc['time_s'])
+        fmc[f'{side}_{part}_velocity_y'] = np.gradient(fmc[f'{side}_{part}_y'], fmc['time_s'])
+        fmc[f'{side}_{part}_velocity_z'] = np.gradient(fmc[f'{side}_{part}_z'], fmc['time_s'])
 
     # tangential velocity of points
     for part in body_parts:
         fmc[f'right_{part}_tangential_velocity'] = (
-            (fmc[f'right_{part}_velocity_x'] ** 2 + 
-            fmc[f'right_{part}_velocity_y'] ** 2 + 
-            fmc[f'right_{part}_velocity_z'] ** 2) ** 0.5
+            (fmc[f'{side}_{part}_velocity_x'] ** 2 + 
+            fmc[f'{side}_{part}_velocity_y'] ** 2 + 
+            fmc[f'{side}_{part}_velocity_z'] ** 2) ** 0.5
         ) 
       
     return fmc
            
-
 # this is a butterworth filter
 def butterfilter(fmc, order=4, fs=31.0, cutoff_freq=12.0):
     # Read the CSV file
@@ -99,6 +116,37 @@ def animate_3d_plot(fmc, x, y, z):
 
     return ani
 
+# this is a class for the reach data. 
+# i find it really difficult to keep typing fmc['right_shoulder_x'] and so on.
+class reachData:
+  sho = []
+  elb = []
+  wri = []
+  tanvelsho = []
+  tanvelelb = []
+  tanvelwri = []
+  velsho = []
+  velelb = []
+  velwri = []
+  time = []
+
+# constructor for reach data, receiving a pandas dataframe
+  def __init__(self, fmc:pd.DataFrame):
+    # get the x and y data for the shoulder, elbow, and wrist
+    self.sho = np.array([fmc['right_shoulder_x'], fmc['right_shoulder_y'], fmc['right_shoulder_z']])
+    self.elb = np.array([fmc['right_elbow_x'], fmc['right_elbow_y'], fmc['right_elbow_z']])
+    self.wri = np.array([fmc['right_wrist_x'], fmc['right_wrist_y'], fmc['right_wrist_z']])
+    # get the velocity data for the shoulder, elbow, and wrist
+    self.velsho = np.array([fmc['right_shoulder_velocity_x'], fmc['right_shoulder_velocity_y'], fmc['right_shoulder_velocity_z']])
+    self.velelb = np.array([fmc['right_elbow_velocity_x'], fmc['right_elbow_velocity_y'], fmc['right_elbow_velocity_z']])
+    self.velwri = np.array([fmc['right_wrist_velocity_x'], fmc['right_wrist_velocity_y'], fmc['right_wrist_velocity_z']])
+
+    # get tanvel data for sho elb wrist
+    self.tanvelsho = np.array(fmc['right_shoulder_tangential_velocity'])
+    self.tanvelelb = np.array(fmc['right_elbow_tangential_velocity'])
+    self.tanvelwri = np.array(fmc['right_wrist_tangential_velocity'])
+    # get the time data
+    self.time = np.array(fmc['time_s'])
 
 
-
+    
