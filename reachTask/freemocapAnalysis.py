@@ -1,4 +1,5 @@
 # this is a module for pulling functions from into the code late.
+#%%
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,16 +9,28 @@ from mpl_toolkits.mplot3d import Axes3D
 import sys
 import os
 
+# list of functions in this module:
+# addReachPath()
+# setdatapath(str_who)
+# resample_data(data, time, sr)
+# x_y_z_plot(fmc, x, y, z)
+# tan_vel(fmc:pd.DataFrame,side='right',body_parts=['wrist', 'elbow', 'shoulder'])
+# vel3D(time:np.array, data:np.array)
+# butterfilter(fmc, order=4, fs=31.0, cutoff_freq=12.0)
+# lowpass(data:np.array, order=4, fs=31.0, cutoff_freq=12.0)
+# lowpass_cols(datarows:np.array, order=4, fs=31.0, cutoff_freq=12.0)
+# animate_3d_plot(fmc, x, y, z)
+
+
 def addReachPath():
   str_path = sys.path[0]
   sys.path.append(os.path.join(str_path,'reachTask'))
-
 
 def setdatapath(str_who):
   # add the path reachTask
   # get the name of the directory containing this file:
   if str_who == 'romeo':
-    str_datadir = "hi"
+    str_datadir = "setting up the path for romeo; not sure what it is yet"
   elif str_who == "jeremy":
     str_datadir = "/Users/jeremy/OneDrive - University of Calgary/Freemocap 2023/freemocap_data/recording_sessions"
   else:
@@ -25,6 +38,30 @@ def setdatapath(str_who):
   
   sys.path.append(str_datadir)
   return str_datadir
+
+def resample_data(time, data, sr):
+  # new time
+  time_resamp = np.arange(time[0], time[-1], 1/sr)
+
+  # Resample the data using linear interpolation
+  data_resamp = np.zeros((3, len(time_resamp)))
+  for i in range(data.shape[0]):
+    data_resamp[i, :] = np.interp(time_resamp, time, data[i, :])
+  return time_resamp, data_resamp
+
+# 3d plotting of data
+def x_y_z_plot(fmc, x, y, z):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    ax.plot(fmc[x], fmc[y], fmc[z])
+    ax.set_xlabel(x)
+    ax.set_ylabel(y)
+    ax.set_zlabel(z)
+    ax.set_title(f'{x}, {y}, {z}')
+
+    plt.show()
+    return fmc
 
 def tan_vel(fmc:pd.DataFrame,side='right',body_parts=['wrist', 'elbow', 'shoulder']):
     # freemocap data
@@ -58,11 +95,23 @@ def tan_vel(fmc:pd.DataFrame,side='right',body_parts=['wrist', 'elbow', 'shoulde
         ) 
       
     return fmc
-           
-# this is a butterworth filter
+
+def vel3D(time:np.array, data:np.array):
+  # def vel3D(time:np.array, data:np.array):
+  # take derivative of 3 rows of input data nparray i.e. data[0,:],data[1,:],data[2,:] wrt time vector
+  # use np.gradient
+
+  # initialize an empty array to store the velocity data
+  vel = np.empty_like(data)
+  # now fill each of vel rows
+  for i, row in enumerate(data):
+    vel[i] = np.gradient(row, time)
+
+  return vel
+        
+          # this is a butterworth filter
 def butterfilter(fmc, order=4, fs=31.0, cutoff_freq=12.0):
     # Read the CSV file
-    fmc
 
     # Calculate normalized cutoff frequency
     nyquist = 0.5 * fs
@@ -75,29 +124,40 @@ def butterfilter(fmc, order=4, fs=31.0, cutoff_freq=12.0):
     for column in fmc:
         data_column = fmc[column]
         filtered_data = filtfilt(b, a, data_column)
-        fmc[f'filtered_{column}'] = filtered_data
+        fmc[f'{column}_f'] = filtered_data
 
     return fmc
     
-# 3d plotting of data
-def x_y_z_plot(fmc, x, y, z):
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
+#lowpass and return a particular data column
+def lowpass(data:np.array, order=4, fs=31.0, cutoff_freq=12.0):
 
-    ax.plot(fmc[x], fmc[y], fmc[z])
-    ax.set_xlabel(x)
-    ax.set_ylabel(y)
-    ax.set_zlabel(z)
-    ax.set_title(f'{x}, {y}, {z}')
+    # Calculate normalized cutoff frequency
+    nyquist = 0.5 * fs
+    normal_cutoff = cutoff_freq / nyquist
 
-    plt.show()
-    return fmc
+    # Design a Butterworth filter
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
 
+    # Apply the filter to each column
+    data_f = filtfilt(b, a, data)
+
+    return data_f
+
+def lowpass_cols(datarows:np.array, order=4, fs=31.0, cutoff_freq=12.0):
+  # Initialize an empty array to store the filtered data
+  filtered_data = np.empty_like(datarows)
+
+  # Apply lowpass filter to each row in the input array
+  for i, row in enumerate(datarows):
+    filtered_data[i] = lowpass(row, order, fs, cutoff_freq)
+
+  return filtered_data
 
 # add the animation one here
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
 
 def animate_3d_plot(fmc, x, y, z):
     fig = plt.figure()
@@ -116,37 +176,6 @@ def animate_3d_plot(fmc, x, y, z):
 
     return ani
 
-# this is a class for the reach data. 
-# i find it really difficult to keep typing fmc['right_shoulder_x'] and so on.
-class reachData:
-  sho = []
-  elb = []
-  wri = []
-  tanvelsho = []
-  tanvelelb = []
-  tanvelwri = []
-  velsho = []
-  velelb = []
-  velwri = []
-  time = []
-
-# constructor for reach data, receiving a pandas dataframe
-  def __init__(self, fmc:pd.DataFrame):
-    # get the x and y data for the shoulder, elbow, and wrist
-    self.sho = np.array([fmc['right_shoulder_x'], fmc['right_shoulder_y'], fmc['right_shoulder_z']])
-    self.elb = np.array([fmc['right_elbow_x'], fmc['right_elbow_y'], fmc['right_elbow_z']])
-    self.wri = np.array([fmc['right_wrist_x'], fmc['right_wrist_y'], fmc['right_wrist_z']])
-    # get the velocity data for the shoulder, elbow, and wrist
-    self.velsho = np.array([fmc['right_shoulder_velocity_x'], fmc['right_shoulder_velocity_y'], fmc['right_shoulder_velocity_z']])
-    self.velelb = np.array([fmc['right_elbow_velocity_x'], fmc['right_elbow_velocity_y'], fmc['right_elbow_velocity_z']])
-    self.velwri = np.array([fmc['right_wrist_velocity_x'], fmc['right_wrist_velocity_y'], fmc['right_wrist_velocity_z']])
-
-    # get tanvel data for sho elb wrist
-    self.tanvelsho = np.array(fmc['right_shoulder_tangential_velocity'])
-    self.tanvelelb = np.array(fmc['right_elbow_tangential_velocity'])
-    self.tanvelwri = np.array(fmc['right_wrist_tangential_velocity'])
-    # get the time data
-    self.time = np.array(fmc['time_s'])
 
 
-    
+# %%
