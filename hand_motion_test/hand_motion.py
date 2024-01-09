@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-df = pd.read_csv('wrist_movement.csv')  # opens file
+df = pd.read_csv('hand_motion_test\wrist_movement.csv')  # opens file
 
 body_column = 'right_wrist_x'
 # options: 'right_index_x', 'right_thumb_x', 'right_wrist_x'
@@ -52,3 +52,4 @@ def onclick(event):
 cid = plt.gcf().canvas.mpl_connect('button_press_event', onclick)
 
 plt.show()
+

@@ -1,54 +1,67 @@
 # this is a module for pulling functions from into the code late.
-#%%
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import butter, filtfilt
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
-import sys
-import os
-
-# list of functions in this module:
-# addReachPath()
-# setdatapath(str_who)
-# resample_data(data, time, sr)
-# x_y_z_plot(fmc, x, y, z)
-# tan_vel(fmc:pd.DataFrame,side='right',body_parts=['wrist', 'elbow', 'shoulder'])
-# vel3D(time:np.array, data:np.array)
-# butterfilter(fmc, order=4, fs=31.0, cutoff_freq=12.0)
-# lowpass(data:np.array, order=4, fs=31.0, cutoff_freq=12.0)
-# lowpass_cols(datarows:np.array, order=4, fs=31.0, cutoff_freq=12.0)
-# animate_3d_plot(fmc, x, y, z)
 
 
-def addReachPath():
-  str_path = sys.path[0]
-  sys.path.append(os.path.join(str_path,'reachTask'))
+def tanVel(fmc:pd.DataFrame):
+    # freemocap data
+    body_parts = ['wrist', 'elbow', 'shoulder']
 
-def setdatapath(str_who):
-  # add the path reachTask
-  # get the name of the directory containing this file:
-  if str_who == 'romeo':
-    str_datadir = "setting up the path for romeo; not sure what it is yet"
-  elif str_who == "jeremy":
-    str_datadir = "/Users/jeremy/OneDrive - University of Calgary/Freemocap 2023/freemocap_data/recording_sessions"
-  else:
-    print('unknown user name %s' % (str_who))
-  
-  sys.path.append(str_datadir)
-  return str_datadir
+    # changes in distance between points
+    for part in body_parts:
+        fmc[f'right_{part}_delta_x'] = fmc[f'right_{part}_x'].diff()
+        fmc[f'right_{part}_delta_y'] = fmc[f'right_{part}_y'].diff()
+        fmc[f'right_{part}_delta_z'] = fmc[f'right_{part}_z'].diff()
 
-def resample_data(time, data, sr):
-  # new time
-  time_resamp = np.arange(time[0], time[-1], 1/sr)
+    for part in body_parts:
+        ts = fmc['timestamp']
+        ts0 = ts - ts[0]
+        #now ts0 is in nanoseconds, conver to seconds
+        ts_sec = ts0 / 1000000000
+        #plt.plot(ts_sec)
+        fmc['time_s'] = ts_sec
 
-  # Resample the data using linear interpolation
-  data_resamp = np.zeros((3, len(time_resamp)))
-  for i in range(data.shape[0]):
-    data_resamp[i, :] = np.interp(time_resamp, time, data[i, :])
-  return time_resamp, data_resamp
+    # velocity of points
+    for part in body_parts:
+        fmc[f'right_{part}_velocity_x'] = np.gradient(fmc[f'right_{part}_x'], fmc['time_s'])
+        fmc[f'right_{part}_velocity_y'] = np.gradient(fmc[f'right_{part}_y'], fmc['time_s'])
+        fmc[f'right_{part}_velocity_z'] = np.gradient(fmc[f'right_{part}_z'], fmc['time_s'])
 
+    # tangential velocity of points
+    for part in body_parts:
+        fmc[f'right_{part}_tangential_velocity'] = (
+            (fmc[f'right_{part}_velocity_x'] ** 2 + 
+            fmc[f'right_{part}_velocity_y'] ** 2 + 
+            fmc[f'right_{part}_velocity_z'] ** 2) ** 0.5
+        ) 
+      
+    return fmc
+           
+
+# this is a butterworth filter
+def butterfilter(fmc, order=4, fs=31.0, cutoff_freq=12.0):
+    # Read the CSV file
+    fmc
+
+    # Calculate normalized cutoff frequency
+    nyquist = 0.5 * fs
+    normal_cutoff = cutoff_freq / nyquist
+
+    # Design a Butterworth filter
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+
+    # Apply the filter to each column
+    for column in fmc:
+        data_column = fmc[column]
+        filtered_data = filtfilt(b, a, data_column)
+        fmc[f'filtered_{column}'] = filtered_data
+
+    return fmc
+    
 # 3d plotting of data
 def x_y_z_plot(fmc, x, y, z):
     fig = plt.figure()
@@ -63,101 +76,11 @@ def x_y_z_plot(fmc, x, y, z):
     plt.show()
     return fmc
 
-def tan_vel(fmc:pd.DataFrame,side='right',body_parts=['wrist', 'elbow', 'shoulder']):
-    # freemocap data
-    
-    # changes in distance between points
-    for part in body_parts:
-        fmc[f'{side}_{part}_delta_x'] = fmc[f'right_{part}_x'].diff()
-        fmc[f'{side}_{part}_delta_y'] = fmc[f'right_{part}_y'].diff()
-        fmc[f'{side}_{part}_delta_z'] = fmc[f'right_{part}_z'].diff()
-
-    for part in body_parts:
-        ts = fmc['timestamp']
-        ts0 = ts - ts[0]
-        #now ts0 is in nanoseconds, conver to seconds
-        ts_sec = ts0 / 1000000000
-        #plt.plot(ts_sec)
-        fmc['time_s'] = ts_sec
-
-    # velocity of points
-    for part in body_parts:
-        fmc[f'{side}_{part}_velocity_x'] = np.gradient(fmc[f'{side}_{part}_x'], fmc['time_s'])
-        fmc[f'{side}_{part}_velocity_y'] = np.gradient(fmc[f'{side}_{part}_y'], fmc['time_s'])
-        fmc[f'{side}_{part}_velocity_z'] = np.gradient(fmc[f'{side}_{part}_z'], fmc['time_s'])
-
-    # tangential velocity of points
-    for part in body_parts:
-        fmc[f'right_{part}_tangential_velocity'] = (
-            (fmc[f'{side}_{part}_velocity_x'] ** 2 + 
-            fmc[f'{side}_{part}_velocity_y'] ** 2 + 
-            fmc[f'{side}_{part}_velocity_z'] ** 2) ** 0.5
-        ) 
-      
-    return fmc
-
-def vel3D(time:np.array, data:np.array):
-  # def vel3D(time:np.array, data:np.array):
-  # take derivative of 3 rows of input data nparray i.e. data[0,:],data[1,:],data[2,:] wrt time vector
-  # use np.gradient
-
-  # initialize an empty array to store the velocity data
-  vel = np.empty_like(data)
-  # now fill each of vel rows
-  for i, row in enumerate(data):
-    vel[i] = np.gradient(row, time)
-
-  return vel
-        
-          # this is a butterworth filter
-def butterfilter(fmc, order=4, fs=31.0, cutoff_freq=12.0):
-    # Read the CSV file
-
-    # Calculate normalized cutoff frequency
-    nyquist = 0.5 * fs
-    normal_cutoff = cutoff_freq / nyquist
-
-    # Design a Butterworth filter
-    b, a = butter(order, normal_cutoff, btype='low', analog=False)
-
-    # Apply the filter to each column
-    for column in fmc:
-        data_column = fmc[column]
-        filtered_data = filtfilt(b, a, data_column)
-        fmc[f'{column}_f'] = filtered_data
-
-    return fmc
-    
-#lowpass and return a particular data column
-def lowpass(data:np.array, order=4, fs=31.0, cutoff_freq=12.0):
-
-    # Calculate normalized cutoff frequency
-    nyquist = 0.5 * fs
-    normal_cutoff = cutoff_freq / nyquist
-
-    # Design a Butterworth filter
-    b, a = butter(order, normal_cutoff, btype='low', analog=False)
-
-    # Apply the filter to each column
-    data_f = filtfilt(b, a, data)
-
-    return data_f
-
-def lowpass_cols(datarows:np.array, order=4, fs=31.0, cutoff_freq=12.0):
-  # Initialize an empty array to store the filtered data
-  filtered_data = np.empty_like(datarows)
-
-  # Apply lowpass filter to each row in the input array
-  for i, row in enumerate(datarows):
-    filtered_data[i] = lowpass(row, order, fs, cutoff_freq)
-
-  return filtered_data
 
 # add the animation one here
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
-import numpy as np
 
 def animate_3d_plot(fmc, x, y, z):
     fig = plt.figure()
@@ -176,6 +99,20 @@ def animate_3d_plot(fmc, x, y, z):
 
     return ani
 
+# click detection
+
+def click_starts_ends(fname):
+    coordinates = []
+    # Function to capture mouse clicks
+    def onclick(event):
+        coordinates.append((event.xdata, event.ydata))
+        df = pd.DataFrame(coordinates, columns=['X'])
+        df.to_csv(f'click_{fname}.csv', index=False)
+        #print(f"Coordinates after {len(coordinates)} clicks saved to 'click_coordinates.csv'")
+
+# Connect the click event to the function
+    cid = plt.gcf().canvas.mpl_connect('button_press_event', onclick)
+
+    return coordinates
 
 
-# %%
