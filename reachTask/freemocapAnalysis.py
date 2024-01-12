@@ -10,6 +10,7 @@ import sys
 import os
 
 # list of functions in this module:
+# get_list_subject_files(sname)
 # addReachPath()
 # setdatapath(str_who)
 # resample_data(data, time, sr)
@@ -20,7 +21,7 @@ import os
 # lowpass(data:np.array, order=4, fs=31.0, cutoff_freq=12.0)
 # lowpass_cols(datarows:np.array, order=4, fs=31.0, cutoff_freq=12.0)
 # animate_3d_plot(fmc, x, y, z)
-
+# click_starts_ends(fname)
 
 def addReachPath():
   str_path = sys.path[0]
@@ -29,9 +30,9 @@ def addReachPath():
 def setdatapath(str_who):
   # add the path reachTask
   # get the name of the directory containing this file:
-  if str_who == 'romeo':
-    str_datadir = "setting up the path for romeo; not sure what it is yet"
-  elif str_who == "jeremy":
+  if str_who == 'rom':
+    str_datadir = r"C:\Users\romyu\OneDrive - University of Calgary\Freemocap 2023\freemocap_data\recording_sessions"
+  elif str_who == "jer":
     str_datadir = "/Users/jeremy/OneDrive - University of Calgary/Freemocap 2023/freemocap_data/recording_sessions"
   else:
     print('unknown user name %s' % (str_who))
@@ -176,6 +177,112 @@ def animate_3d_plot(fmc, x, y, z):
 
     return ani
 
-
-
 # %%
+# click detection
+
+def click_starts_ends(fname):
+    coordinates = []
+    # Function to capture mouse clicks
+    def onclick(event):
+        coordinates.append((event.xdata))
+        df = pd.DataFrame(coordinates, columns=['X'])
+        df.to_csv(f'click_{fname}.csv', index=False)
+        #print(f"Coordinates after {len(coordinates)} clicks saved to 'click_coordinates.csv'")
+
+# Connect the click event to the function
+    cid = plt.gcf().canvas.mpl_connect('button_press_event', onclick)
+
+    return 
+
+def get_list_subject_files(sname,datapath):
+  fnames = []
+  
+  if sname == 'who':
+    print("na, le, je, ro, cal_romnov10, cal_jernov10")
+    print("but, mostly je and ro are clean, everything else noisy.")
+  
+  elif sname == 'je':
+    name_session    = "session_2023-12-11_11_07_49"
+    
+    name_recording  = "recording_11_13_39_gmt-7"
+    name_file       = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+    name_recording  = "recording_11_17_02_gmt-7"
+    name_file       = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+  elif sname == 'ro':    
+    name_session    = "session_2023-12-11_11_27_27"
+    name_recording  = "recording_11_31_45_gmt-7"
+    name_file       = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+  elif sname == 'nadec':
+    name_session    = "session_2023-12-11_10_07_53"
+    name_recording  = "recording_10_11_01_gmt-7"
+    name_file       = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+  elif sname == 'le':
+    name_session = 'session_2023-11-09_10_44_13'
+    name_recording = 'recording_11_19_02_gmt-7'
+    name_file = f'{name_recording}_by_trajectory.csv'
+    fname_full = os.path.join(datapath, name_session, name_recording, name_file)
+    fnames.append(fname_full)
+
+    name_recording = 'recording_11_38_11_gmt-7'
+    name_file = f'{name_recording}_by_trajectory.csv'
+    fname_full = os.path.join(datapath, name_session, name_recording, name_file)
+    fnames.append(fname_full)
+
+  elif sname == 'na':
+    name_session = 'session_2023-11-09_10_44_13'
+    name_recording = 'recording_11_54_33_gmt-7'
+    name_file = f'{name_recording}_by_trajectory.csv'
+    fname_full = os.path.join(datapath, name_session, name_recording, name_file)
+    fnames.append(fname_full)
+
+    name_recording = 'recording_11_56_55_gmt-7'
+    name_file = f'{name_recording}_by_trajectory.csv'
+    fname_full = os.path.join(datapath, name_session, name_recording, name_file)
+    fnames.append(fname_full)
+
+  elif sname == 'cal_romnov10':
+    name_session = 'session_2023-11-10_12_35_57'
+    name_recording = 'recording_13_02_50_gmt-7'
+    name_file = f'{name_recording}_by_trajectory.csv'
+    fname_full = os.path.join(datapath, name_session, name_recording, name_file)
+    fnames.append(fname_full)
+    
+    name_recording = 'recording_13_04_20_gmt-7'
+    name_file = f'{name_recording}_by_trajectory.csv'
+    fname_full = os.path.join(datapath, name_session, name_recording, name_file)
+    fnames.append(fname_full)
+
+    name_recording = 'recording_13_08_48_gmt-7'
+    name_file = f'{name_recording}_by_trajectory.csv'
+    fname_full = os.path.join(datapath, name_session, name_recording, name_file)
+    fnames.append(fname_full)
+
+    name_recording = 'recording_13_13_36_gmt-7'
+    name_file = f'{name_recording}_by_trajectory.csv'
+    fname_full = os.path.join(datapath, name_session, name_recording, name_file)
+    fnames.append(fname_full)
+
+  elif sname == 'cal_jernov10':
+    name_session = 'session_2023-11-10_13_41_10'
+    name_recording = 'recording_13_58_54_gmt-7'
+    name_file = f'{name_recording}_by_trajectory.csv'
+    fname_full = os.path.join(datapath, name_session, name_recording, name_file)
+    fnames.append(fname_full)
+
+    name_recording = 'recording_14_01_05_gmt-7'
+    name_file = f'{name_recording}_by_trajectory.csv'
+    fname_full = os.path.join(datapath, name_session, name_recording, name_file)
+    fnames.append(fname_full)
+  return fnames

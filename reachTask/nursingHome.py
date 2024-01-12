@@ -15,11 +15,8 @@ fm.addReachPath()
 datapath = fm.setdatapath("jeremy")
 
 # look at a particular nursing home recording. 
-name_session = "session_2023-12-11_11_07_49"
-name_recording = "recording_11_13_39_gmt-7"
-name_file = "recording_11_13_39_gmt-7_by_trajectory.csv"
-fname_full = os.path.join(datapath, name_session,name_recording, name_file)
-print(fname_full)
+fnames = fm.get_list_subject_files('lin',datapath)
+fname_full = fnames[0]
 datapd = pd.read_csv(fname_full)
 datapd = fm.tan_vel(datapd)
 
@@ -27,19 +24,24 @@ fm.x_y_z_plot(datapd, 'right_wrist_x', 'right_wrist_y', 'right_wrist_z')
 #fm.animate_3d_plot(fmc, 'right_wrist_x', 'right_wrist_y', 'right_wrist_z')
 
 right = rf.reachData(datapd)
-
-#%%
-#work with the data to snip out the desired moments in time. 
 starts,ends = right.click_add_starts_ends(right.time,right.wri_f,24)
+
 # %%
 fig,ax=plt.subplots(4,1)
 ax[0].plot(right.time, right.wri_f[0,:])
 ax[1].plot(right.time, right.wri_f[1,:])
 ax[2].plot(right.time, right.wri_f[2,:])
 ax[3].plot(right.time, right.tanvelwri)
-ax[0].plot(right.time[right.mov_starts], right.wri[0,right.mov_ends], 'ro')
+ax[0].plot(right.time[starts], right.wri[0,ends], 'ro')
 
-# #%%
+
+#%% add velocity
+right.wri_ddt = fm.vel3D(right.time, right.wri_f)
+
+plt.plot(right.time, right.wri_ddt[0,:]/1000)
+plt.xlabel('time (s)')
+plt.ylabel('velocity (m/s)')
+
 # # Compute the delta time for each reach
 # delta_time = right.time[right.mov_ends] - right.time[right.mov_starts]
 
