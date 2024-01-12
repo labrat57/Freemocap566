@@ -37,7 +37,10 @@ def setdatapath(str_who):
   else:
     print('unknown user name %s' % (str_who))
   
-  sys.path.append(str_datadir)
+  if os.path.exists(str_datadir):
+    sys.path.append(str_datadir)
+  else:
+    print('path %s does not exist. Check var in setdatapath() is either jer or rom.' % (str_datadir))
   return str_datadir
 
 def resample_data(time, data, sr):

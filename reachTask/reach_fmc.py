@@ -116,9 +116,12 @@ class reachData:
       indices = [np.abs(self.time - x).argmin() for x in x_values]
 
       # Save the indices to a csv file
-      df = pd.DataFrame(indices, columns=['indices'])
-      fsave = os.path.join('processed_clicks',f'{sname}_savedclicks.csv')
-      df.to_csv(fsave, index=False)
+      if len(clicks) == numclicks:
+        df = pd.DataFrame(indices, columns=['indices'])
+        fsave = os.path.join('processed_clicks',f'{sname}_savedclicks.csv')
+        df.to_csv(fsave, index=False)
+      else:
+        print("Not saving indices, because you didn't click enough times.")
     
     self.mov_starts = indices[::2]
     self.mov_ends = indices[1::2]
