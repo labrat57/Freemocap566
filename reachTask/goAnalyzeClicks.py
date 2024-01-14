@@ -8,8 +8,8 @@ import importlib
 # then you can do importlib.reload(rf) to reload the module
 
 # Load data
-sname = 'je' # at the moment, 'je' and 'ro' are the only clean datasets that i can tell. and ro is short. 
-datapath = fa.setdatapath("jer") 
+sname = 'ro' # at the moment, 'je' and 'ro' are the only clean datasets that i can tell. and ro is short. 
+datapath = fa.setdatapath("rom") 
 fnames = fa.get_list_subject_files(sname,datapath)
 pddata = pd.read_csv(fnames[0])
 reachr = rf.reachData(pddata)
