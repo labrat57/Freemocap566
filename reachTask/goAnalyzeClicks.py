@@ -21,6 +21,8 @@ reachr.click_add_wrist_starts_ends(numclicks=24,sname=sname)
 plt.plot(reachr.time,reachr.tanvel_wri)
 plt.plot(reachr.time[reachr.mov_starts],reachr.tanvel_wri[reachr.mov_starts],'go')
 plt.plot(reachr.time[reachr.mov_ends],reachr.tanvel_wri[reachr.mov_ends],'ro')
+plt.xlabel('time (s)')
+plt.ylabel('velocity (mm/s)')
 plt.show()
 # %% Here you could extract peak tanvel.
 # in reachr, the field is reachr.tanvel_wri.
