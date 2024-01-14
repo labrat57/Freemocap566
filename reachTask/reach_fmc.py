@@ -91,9 +91,14 @@ class reachData:
     if len(indices)==0:
       fig, ax = plt.subplots(4, 1)
       ax[0].plot(self.time, self.vel_wri[0, :])
+      ax[0].ylabel('v (m/s)')
       ax[1].plot(self.time, self.vel_wri[1, :])
+      ax[1].ylabel('v (m/s)')
       ax[2].plot(self.time, self.vel_wri[2, :])
+      ax[2].ylabel('v (m/s)')
       ax[3].plot(self.time, self.tanvel_wri)
+      ax[3].xlabel('time (s)')
+      ax[3].ylabel('v (m/s)')
 
       clicks = []
       def onclick(event):
