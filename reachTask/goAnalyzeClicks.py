@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import importlib
 # then you can do importlib.reload(rf) to reload the module
-
 # Load data
 sname = 'je' # at the moment, 'je' and 'ro' are the only clean datasets that i can tell. and ro is short. 
 datapath = fa.setdatapath("jer") 
