@@ -11,7 +11,6 @@ import os
 #if not os.path.exists('processed_clicks'):
  #   os.mkdir('processed_clicks')
 
-
 # Load data
 sname = 'je' # at the moment, 'je' and 'ro' are the only clean datasets that i can tell. and ro is short. 
 datapath = fa.setdatapath('rom') #name of user
