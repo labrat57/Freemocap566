@@ -82,7 +82,7 @@ class reachData:
     indices = []
     if sname is not None:
       filename = f'{sname}_savedclicks.csv'
-      fnamefull = os.path.join('processed_clicks',filename)
+      fnamefull = os.path.join('..\\processed_clicks',filename) # this is to allow it to find the right path to the outside directory
       if os.path.exists(fnamefull):
         # Load the file
         clickpd = pd.read_csv(fnamefull)
