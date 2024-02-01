@@ -53,6 +53,18 @@ def resample_data(time, data, sr):
     data_resamp[i, :] = np.interp(time_resamp, time, data[i, :])
   return time_resamp, data_resamp
 
+#position over time plot of data
+# y should be something like this 'right_wrist_y'
+def pos_time_plot(fmc, x,y,z):
+    x_data = fmc[x]
+    y_data= fmc[y]
+    z_data= fmc[z]
+
+    # Calculate absolute location
+    fmc['wrist_abs_location'] = (x_data**2 + y_data**2 + z_data**2)**0.5
+
+    return fmc
+
 # 3d plotting of data
 def x_y_z_plot(fmc, x, y, z):
     fig = plt.figure()
@@ -201,9 +213,46 @@ def get_list_subject_files(sname,datapath):
   fnames = []
   
   if sname == 'who':
-    print("na, le, je, ro, cal_romnov10, cal_jernov10")
+    print("na, le, je, ro, cal_romnov10, cal_jernov10, hpl_trial1,2,3,4,5")
     print("but, mostly je and ro are clean, everything else noisy.")
+
+  elif sname == 'hpl_trial1':    
+    name_session    = "session_2024-01-25_12_01_45"
+    name_recording  = "recording_12_11_12_gmt-7__trial1"
+    name_file       = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+
+  elif sname == 'hpl_trial2':    
+    name_session    = "session_2024-01-25_12_01_45"
+    name_recording  = "recording_12_26_11_gmt-7__trial2"
+    name_file       = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+
+  elif sname == 'hpl_trial3':    
+    name_session    = "session_2024-01-25_12_01_45"
+    name_recording  = "recording_12_37_15_gmt-7__trial3"
+    name_file       = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+  elif sname == 'hpl_trial4':    
+    name_session    = "session_2024-01-25_12_01_45"
+    name_recording  = "recording_12_47_24_gmt-7__trial4"
+    name_file       = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
   
+  elif sname == 'hpl_trial5':    
+    name_session    = "session_2024-01-25_12_01_45"
+    name_recording  = "recording_12_54_48_gmt-7__trial5"
+    name_file       = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
   elif sname == 'je':
     name_session    = "session_2023-12-11_11_07_49"
     
