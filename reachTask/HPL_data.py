@@ -3,8 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from freemocapAnalysis import pos_time_plot, tan_vel, click_starts_ends
 from freemocapAnalysis import get_list_subject_files , setdatapath
-from reach_fmc import __init__
 
+from reach_fmc import reachData
 import freemocapAnalysis as fa
 import reach_fmc as rf
 import numpy as np
@@ -14,7 +14,6 @@ import numpy as np
 #just clikc the middle peak and we will get speed and duration. for distance use pytag to get the distance(using wehre you cick as the start adn end of the vector
 #I'd guess duration is easy to calculate from the two minima surrounding the max. I assume that's when the hand slows to pick up the object.
 datadir = setdatapath('rom')
-
 
 # Load the click data
 trial_1_clicks = pd.read_csv('C:/code/Freemocap566/processed_clicks/hpl_trial1_savedclicks.csv')
@@ -33,34 +32,25 @@ reachr_trial2 = rf.reachData(pdf)
 pdf = pd.read_csv(trial3_filenamelist[0])
 reachr_trial3 = rf.reachData(pdf)
 
-#%%
+
 plt.plot(reachr_trial1.time,reachr_trial1.wri_f[0,:])
 plt.show()
-
-#%%
 
 # Define the trials and their corresponding click data
 subjects = ['trial_1', 'trial_2', 'trial_3'] #subjects to load data for
 clicks = {'trial_1': trial_1_clicks, 'trial_2': trial_2_clicks, 'trial_3': trial_3_clicks} # clicks for each subject
 
 
-# Load the data for each trial
-data = {}
-for sname in subjects:
-    # Load data
-    str_who = 'rom'  # or 'jer', depending on which user's data path you want
-    datapath = setdatapath(str_who)
-    fnames = get_list_subject_files(sname, datapath)
-    subject_data = [pd.read_csv(fname) for fname in fnames]
+# Create an instance of the reach_fmc class
+reach_data = reachData(reachr_trial3)
 
-    # Calculate the tangential velocity for each DataFrame
-    for df in subject_data:
-        side = 'right'
-        body_parts = ['wrist', 'elbow', 'shoulder']  # we only want wrist anyways
-        df = tan_vel(df, side, body_parts)
-    
-    data[sname] = subject_data
+# Now you can access the tanvel_wri data
+#tanvel_wri = reach_data.tanvel_wri
 
+# And the time data
+#time = r#each_data.time
+#plt.plot(time, tanvel_wri)
+#%%
 # this will be the distance plot
 # Loop over each subject and their data
 for sname, subject_data in data.items():
