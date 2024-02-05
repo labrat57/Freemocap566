@@ -57,40 +57,49 @@ fig = plt.figure()
 fig.set_size_inches(2,2)
 tv_sm = fa.lowpass(reachr.tanvel_wri, fs=30, cutoff_freq = 8)
 tgts = list()
-ax3d = fig.add_subplot(221,projection='3d')
-ax2 = fig.add_subplot(222)
-ax3 = fig.add_subplot(223)
+ax_3d    = fig.add_subplot(221,projection='3d')
+ax_3dr  = fig.add_subplot(222,projection='3d')
+ax_tv   = fig.add_subplot(223) 
+
 for i in range(len(reachr.mov_starts)):
   
   ind_m = ind_mmoves[i]
   inds = range(ind_m[0],ind_m[1])
+  ax_3d.plot(reachr.wri_f[0,inds], reachr.wri_f[1,inds], reachr.wri_f[2,inds])
+  
   tgt_start = reachr.wri_f[:,inds[0]]
   tgt_end = reachr.wri_f[:,inds[-1]]
-  ax3d.plot(reachr.wri_f[0,inds], reachr.wri_f[1,inds], reachr.wri_f[2,inds])
-  ax3d.plot(tgt_start[0], tgt_start[1], tgt_start[2], 'ro')
-  ax3d.plot(tgt_end[0], tgt_end[1], tgt_end[2], 'go')
+  ax_3d.plot(tgt_start[0], tgt_start[1], tgt_start[2], 'ro')
+  ax_3d.plot(tgt_end[0], tgt_end[1], tgt_end[2], 'go')
   
+  R2calxy = np.array([[-0.689578  , -0.72413109, -0.01078618],
+       [ 0.66407996, -0.62631008, -0.40833013],
+       [ 0.28892905, -0.28873836,  0.9127706 ]])
+  
+  # zero the movements to the first shoulder position
+  sho0 = reachr.sho_f[:,reachr.mov_starts[0:1]]
+  wri_f = reachr.wri_f[:,inds]
+  wri_f = wri_f - sho0
+  # now rotate the vectors
+  wri_r = np.dot(R2calxy,wri_f)
+  ax_3dr.plot(wri_r[0,:], wri_r[1,:], wri_r[2,:])
+  tgt_start = wri_r[:,0]
+  tgt_end = wri_r[:,-1]
+  ax_3dr.plot(tgt_start[0], tgt_start[1], tgt_start[2], 'ro')
+  ax_3dr.plot(tgt_end[0], tgt_end[1], tgt_end[2], 'go')
+  ax_3dr.set_xlabel('x (r+)')
+  ax_3dr.set_ylabel('y (f+)')
+  ax_3dr.set_zlabel('z (u+)')
+  ax_3dr.set_xlim([-200,800])
+  ax_3dr.set_ylim([-200,800])
+  ax_3dr.set_zlim([-500,500])
+
   t = reachr.time[inds]
   t = t-t[0]
   
-  ax2.plot(t,tv_sm[inds])
+  ax_tv.plot(t,tv_sm[inds])
   
-  ax3.plot(reachr.wri_f[0, inds])
-  
-
 plt.xlabel('Time')
 plt.ylabel('wri_f')
-plt.title(f'Movement {i+1}')
 plt.show()
-# %% sanity
-fig, ax = plt.subplots(4, 1)
-ax[0].plot(reachr.time, reachr.vel_wri[0, :])
-ax[0].set_ylabel('v (mm/s)')
-ax[1].plot(reachr.time, reachr.vel_wri[1, :])
-ax[1].set_ylabel('v (mm/s)')
-ax[2].plot(reachr.time, reachr.vel_wri[2, :])
-ax[2].set_ylabel('v (mm/s)')
-plt.show()
-      
-
 # %%

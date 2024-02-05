@@ -216,6 +216,13 @@ def get_list_subject_files(sname,datapath):
     print("na, le, je, ro, cal_romnov10, cal_jernov10, hpl_trial1,2,3,4,5")
     print("but, mostly je and ro are clean, everything else noisy.")
 
+  elif sname == 'hpl_threepcalib3':    
+    name_session    = "session_2024-01-25_12_01_45"
+    name_recording  = "recording_12_03_15_gmt-7__threepcalib3"
+    name_file       = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
   elif sname == 'hpl_trial1':    
     name_session    = "session_2024-01-25_12_01_45"
     name_recording  = "recording_12_11_12_gmt-7__trial1"
