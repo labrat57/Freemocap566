@@ -253,6 +253,24 @@ def get_list_subject_files(sname,datapath):
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
+  # this is jer's versions of trial_2 analysis. 
+  elif sname == 'ro_0125_X':
+    name_session    = "session_2024-01-25_12_01_45"
+    
+    name_recording  = "recording_12_26_11_gmt-7__trial2"
+    name_file       = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+  # this is jer's versions of trial_3 analysis.  
+  elif sname == 'ro_0125_Y':
+    name_session    = "session_2024-01-25_12_01_45"
+  
+    name_recording  = "recording_12_37_15_gmt-7__trial3"
+    name_file       = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
   elif sname == 'je':
     name_session    = "session_2023-12-11_11_07_49"
     
