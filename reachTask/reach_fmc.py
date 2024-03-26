@@ -10,23 +10,42 @@ import os
 
 #%%
 def peaks_and_valleys(tv_sub,tv_thresh_mms=80):
+  ind_peaks = []
+  ind_valleys = [] # valleys define the start and end of the middle movement.
+  domanual = False
+  if tv_sub.shape[0] > 15: # then it cannot be filtered at 2 Hz.
+    # for i in range(len(self.mov_starts)):
+    tv_sub_f = fm.lowpass(tv_sub,fs=30,cutoff_freq= 2)
 
-  # for i in range(len(self.mov_starts)):
-  tv_sub_f = fm.lowpass(tv_sub,fs=30,cutoff_freq= 2)
+    # Find peaks above tv_thresh
+    ind_peaks, _ = find_peaks(tv_sub_f, height=tv_thresh_mms,distance = 10)
+    # Loop between each pair of peaks and find the minima between each
+    
+    for i in range(len(ind_peaks)-1):
+      start_index = ind_peaks[i]
+      end_index = ind_peaks[i+1]
+      minima_index = np.argmin(tv_sub_f[start_index:end_index]) + start_index
+      ind_valleys.append(minima_index)
 
-  # Find peaks above tv_thresh
-  ind_peaks, _ = find_peaks(tv_sub_f, height=tv_thresh_mms,distance = 10)
-  # Loop between each pair of peaks and find the minima between each
-  ind_valleys = []
-  for i in range(len(ind_peaks)-1):
-    start_index = ind_peaks[i]
-    end_index = ind_peaks[i+1]
-    minima_index = np.argmin(tv_sub_f[start_index:end_index]) + start_index
-    ind_valleys.append(minima_index)
+    ind_valleys = np.array(ind_valleys)
+  else:
+    tv_sub_f = tv_sub
+    print("Warning: not enough data to filter.")
+    print("Likely this is a double-click by accident. delete the processedclicks.csv file and try again.")
 
-  ind_valleys = np.array(ind_valleys)
-
-  if len(ind_peaks) + len(ind_valleys) < 5:
+  if len(ind_valleys) ==5:
+    plt.plot(tv_sub)
+    # plot with dashed line tv_sub_f
+    plt.plot(tv_sub_f, '--', label='lowpass')
+    plt.plot(ind_peaks, tv_sub[ind_peaks], "x")
+    plt.plot(ind_valleys, tv_sub[ind_valleys], "o")
+    plt.show()
+    print("Enter 'm' to manually score, anything else to continue.")
+    answer = input()
+    if answer == 'm':
+      domanual = True
+  
+  if (len(ind_peaks) + len(ind_valleys) < 5) or domanual:
     print("Warning: not enough peaks and valleys found.")
     print("switching to manual.")
     coordinates = []
@@ -52,6 +71,7 @@ def peaks_and_valleys(tv_sub,tv_thresh_mms=80):
     
     # print that we manually scored correctly
     print("Five peaks/valley scored.")
+    domanual = False
 
   plt.plot(tv_sub)
   # plot with dashed line tv_sub_f
@@ -277,20 +297,22 @@ class reachData:
         else:
           print("Not saving indices, because you didn't click enough times.")
       else:
-        
-        df = pd.DataFrame(indices, columns=['indices'])
-        module_directory = os.path.dirname(__file__)
-        fsave = os.path.join(module_directory,'processed_clicks',f'{sname[:-4]}_savedclicks.csv')
-        print(fsave)
-        # check if fsave already exists. if it does, ask
-        if os.path.exists(fsave):
-          print(f"{fsave} already exists. Do you want to overwrite it?")
-          print("Enter 'y' to overwrite, anything else to not overwrite.")
-          answer = input()
-          if answer == 'y':
+        if len(clicks) > 0:
+          df = pd.DataFrame(indices, columns=['indices'])
+          module_directory = os.path.dirname(__file__)
+          fsave = os.path.join(module_directory,'processed_clicks',f'{sname[:-4]}_savedclicks.csv')
+          print(fsave)
+          # check if fsave already exists. if it does, ask
+          if os.path.exists(fsave):
+            print(f"{fsave} already exists. Do you want to overwrite it?")
+            print("Enter 'y' to overwrite, anything else to not overwrite.")
+            answer = input()
+            if answer == 'y':
+              df.to_csv(fsave, index=False)
+          else:
             df.to_csv(fsave, index=False)
         else:
-          df.to_csv(fsave, index=False)
+          print("Not saving indices, because you did not click.")
             
     self.mov_starts = indices[::2]
     self.mov_ends = indices[1::2]

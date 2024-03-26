@@ -15,33 +15,35 @@ from scipy.signal import find_peaks
 datapath  = fa.setdatapath("jer") 
 
 # file names:
-fname_rot     = 'ro03_heel'
-fname_trials  = 'ro03'
+subjname_rot     = 'ro03_heel'
+subjname_trials  = 'ro03'
 
 #### steps:
-###1. get the rotation matrix from the heel trial (either pre-loaded or from clicks). 
-  # save matrix R in processed clicks as processed_clicks/fname_rot.mat.
+###1. get the rotation matrix from the heel-on-floor trial (either pre-loaded or from clicks). 
+  # save matrix R in processed clicks as processed_clicks/fname_rot.mat. we could use this to rescale.
 ###2. get the reach data from the trials 2-7, scoring starts/ends of the triple movement. 
   # save as processed_clicks/f'{fname[:-4]}_processed_clicks.csv'. 
 ###3. plot results.
 ###4. get main sequence data.
   # save middle movement scoring as processed_clicks/f'{fname[:-4]}_mainsequence.mat'. 
 ###5. plot main sequence data.
+### after this file has been used to run through every subject, 
+# each of the trials will have a 'f{filename}_mainsequence.mat' file that we can use
+# to merge the subjects together. 
 
 #%% step 1. get rotation matrix for heel-trial file.
 
-fname_rot = 'ro03_heel' 
-fnames    = fa.get_list_subject_files(fname_rot, datapath)
-pddata    = pd.read_csv(fnames[0])
+fnames    = fa.get_list_subject_files(subjname_rot, datapath)
+pddata    = pd.read_csv(fnames[0]) # this list fnames has only 1 heel file for rotation.
 
 lhip = np.array([pddata["left_hip_x"],pddata["left_hip_y"],pddata["left_hip_z"]])
 rhip = np.array([pddata["right_hip_x"],pddata["right_hip_y"],pddata["right_hip_z"]])
 
 # take the mean of the two hip detections, each is a 3, array
 mhip = np.mean([lhip,rhip],axis=0)
-# check to see if we have a processed file.
+# check to see if we have computed a rotation matrix.
 git_directory = os.path.dirname(__file__)
-fname_full = os.path.join(git_directory,'processed_clicks',fname_rot + '.mat')
+fname_full = os.path.join(git_directory,'processed_clicks',subjname_rot + '.mat')
 if os.path.exists(fname_full):
   dat = scipy.io.loadmat(fname_full)
   R = dat["R"]
@@ -61,7 +63,7 @@ ax.plot(rhip_rot.T)
 plt.show()
 
 # %% Step 2 and 3: Click the start and end of each triple movement, and plot.
-fnames_triallist = fa.get_list_subject_files(fname_trials,datapath)
+fnames_triallist = fa.get_list_subject_files(subjname_trials,datapath)
 for i in range(len(fnames_triallist)):
   pathname_cur = fnames_triallist[i]
   pddata_cur = pd.read_csv(pathname_cur)
@@ -86,9 +88,9 @@ for i in range(len(fnames_triallist)):
   # pause for input
   input('Press Enter to continue')
 
-#%% step 4 and 5:
+#%% step 4: mainsequence analysis.
+# note: mainsequence comes from 'mainsequence' Bahill, ..., Stark 1975.
 # score the middle movements using peaks_and_valleys, or manual if it's the wrong number.
-
 for i in range(len(fnames_triallist)):
   pathname_cur = fnames_triallist[i]
   print(f'{pathname_cur}: main sequence analysis.')
@@ -103,13 +105,14 @@ for i in range(len(fnames_triallist)):
   # read in the saved starts/ends.
   reachr.click_add_wrist_starts_ends(sname=fname_cur)
 
-  #
   distancelist, durationlist, peakspeedlist, indlist_middle_mvmnt_start_end = reachr.mainsequence()
 
   # each element in this list is a tuple! time, then wrist.
   tpllist_time_wrist = reachr.cut_middle_movements(indlist_middle_mvmnt_start_end)
 
-  #%% plot in m/s the distance, duration, and speed. 
+  
+  #%% Step 5: plot mainsequence results.
+  # plot in m/s the distance, duration, and speed. 
   #% plot the dist peakspeed
   fig,ax = plt.subplots(2,1)
   #set plot size
