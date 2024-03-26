@@ -48,8 +48,8 @@ ax[0].set_ylim([0,1.0])
 ax[1].plot(distances/1000,peakspeeds/1000,'o')
 ax[1].set_xlabel('Distance (m)')
 ax[1].set_ylabel('Peak Speed (m/s)')
-ax[0].set_xlim([0,0.5])
-ax[0].set_ylim([0,1.5])
+ax[1].set_xlim([0,0.5])
+ax[1].set_ylim([0,1.5])
 #%
 #%%
 # plot wri_f[0,mov_starts[i]:mov_ends[i]] for all mov_starts
@@ -81,7 +81,7 @@ for i in range(len(reachr.mov_starts)):
   wri_f = reachr.wri_f[:,inds]
   wri_f = wri_f - sho0
   # now rotate the vectors
-  wri_r = np.dot(R2calxy,wri_f)
+  wri_r = np.dot(R2calxy.T,wri_f)
   ax_3dr.plot(wri_r[0,:], wri_r[1,:], wri_r[2,:])
   tgt_start = wri_r[:,0]
   tgt_end = wri_r[:,-1]

@@ -7,7 +7,7 @@ import pandas as pd
 import importlib
 # then you can do importlib.reload(rf) to reload the module
 # Load data
-sname = 'hpl_threepcalib3' 
+sname = 'ro03_heel' 
 datapath = fa.setdatapath("jer") 
 fnames = fa.get_list_subject_files(sname,datapath)
 pddata = pd.read_csv(fnames[0])
@@ -23,7 +23,7 @@ rhip = np.array([pddata["right_hip_x"],pddata["right_hip_y"],pddata["right_hip_z
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.plot(time_s,lhip.T)
-t_samp = [2,6,8.5]
+t_samp = [6,16,22]
 # find indices closest to each t_samp
 ind_samp = [np.argmin(np.abs(time_s - t)) for t in t_samp]
 # now plot the points
@@ -36,8 +36,10 @@ plt.show()
 pt1 = lhip[:,ind_samp[0]]
 pt2 = lhip[:,ind_samp[1]]
 pt3 = lhip[:,ind_samp[2]]
-v1 = pt1 - pt2 # positive right
-v2 = pt3 - pt2 # positive forward
+
+# define which 
+v1 = pt3 - pt2 # positive right
+v2 = pt2 - pt1 # positive forward
 # normalize v1 and v2 to be unit length
 v1 = v1/np.linalg.norm(v1)
 v2 = v2/np.linalg.norm(v2)
@@ -47,13 +49,5 @@ v2 = v2/np.linalg.norm(v2)
 # now take the cross product
 v3 = np.cross(v1,v2)
 
-# compute the rotation matrix to go from the data frame to that defined by v1,v2,v3
+### compute the rotation matrix to go from the data frame to that defined by v1,v2,v3
 R = np.array([v1,v2,v3]).T
-
-
-
-# %%
-# sname_test = 'ro_0125_Y' 
-# filenames = fa.get_list_subject_files(sname_test,datapath)
-# pddat = pd.read_csv(filenames[0])
-# reachr = rf.reachData(pddat)

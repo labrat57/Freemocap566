@@ -27,7 +27,7 @@ for imov in range(len(reachr.mov_starts)):
   ax[1].plot(tzeroed,reachr.wri_f[1,inds])
   ax[2].plot(tzeroed,reachr.wri_f[2,inds])
   ax[3].plot(tzeroed,reachr.tanvel_wri[inds])
-  cutreaches.append(np.vstack((tzeroed,reachr.wri_f[:,inds])))
+  cutreaches.append(np.array((tzeroed,reachr.wri_f[:,inds])))
 fig.show()
   
 # %%

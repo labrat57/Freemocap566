@@ -30,24 +30,44 @@ for i, p, analog in reader.read_frames():
   p.shape
 
 # %%
-puck1 = np.ndarray((npoints,5))
-puck2 = np.ndarray((npoints,5))
-finger1 = np.ndarray((npoints,5))
-wrist1 = np.ndarray((npoints,5))
-wrist2 = np.ndarray((npoints,5))
-elbow = np.ndarray((npoints,5))
-sho  = np.ndarray((npoints,5))
+puck1 = np.ndarray((npoints,3))
+puck2 = np.ndarray((npoints,3))
+finger1 = np.ndarray((npoints,3))
+wrist1 = np.ndarray((npoints,3))
+wrist2 = np.ndarray((npoints,3))
+elbow = np.ndarray((npoints,3))
+sho  = np.ndarray((npoints,3))
 
 for i, p, analog in reader.read_frames():
-  puck1[i-1,:] = p[5,:]
-  puck2[i-1,:] = p[6,:]
-  finger1[i-1,:] = p[0,:]
-  wrist1[i-1,:] = p[1,:]
-  wrist2[i-1,:] = p[2,:]
-  elbow[i-1,:] = p[3,:]
-  sho[i-1,:] = p[4,:]
+  puck1[i-1,:] = p[5,0:3]
+  puck2[i-1,:] = p[6,0:3]
+  finger1[i-1,:] = p[0,0:3]
+  wrist1[i-1,:] = p[1,0:3]
+  wrist2[i-1,:] = p[2,0:3]
+  elbow[i-1,:] = p[3,0:3]
+  sho[i-1,:] = p[4,0:3]
 
   
+#%%
+fs = 480  # Sample frequency in Hz
+time_s = np.arange(wrist1.shape[0]) / fs
+
   
-  
+# %%
+#initialize tv with zeros
+tanvel_puck = np.zeros((npoints,1))
+# list comprehension to compute the three vels with gradient
+tanvel_puck = np.sqrt(np.sum(np.gradient(puck1,axis=0)**2,axis=1))
+tanvel_wrist2 = np.sqrt(np.sum(np.gradient(wrist2,axis=0)**2,axis=1))
+
+#%%
+import matplotlib.pyplot as plt
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.plot(time_s, tanvel_puck,linewidth=3)
+ax.plot(time_s, tanvel_wrist2)
+
+ax.set_ylim([0,2])
+fig.show()
+
 # %%
