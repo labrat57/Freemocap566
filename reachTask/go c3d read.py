@@ -8,7 +8,7 @@ import reach_fmc as rf
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 # %%
-datadir = fa.setdatapath('jer')
+datadir = fa.setdatapath('rom')
 
 # %%
 fname = os.path.join(datadir,'PhaseSpace-2024-01-25','trial3.c3d')

@@ -1,4 +1,5 @@
 #%%
+import math
 import sys, os
 sys.path.append(os.path.join(os.getcwd()))
 import freemocapAnalysis as fa
@@ -13,6 +14,7 @@ from scipy.signal import find_peaks
 
 ## here are hopefully the only two things you need to set.
 sname = 'ro_0125_Y' # at the moment, 'je' and 'ro' are the only clean datasets that i can tell. and ro is short. 
+
 datapath = fa.setdatapath("rom") 
 ## /here are hopefully the only two things you need to set.
 
@@ -48,8 +50,8 @@ ax[0].set_ylim([0,1.0])
 ax[1].plot(distances/1000,peakspeeds/1000,'o')
 ax[1].set_xlabel('Distance (m)')
 ax[1].set_ylabel('Peak Speed (m/s)')
-ax[1].set_xlim([0,0.5])
-ax[1].set_ylim([0,1.5])
+ax[0].set_xlim([0,0.5])
+ax[0].set_ylim([0,1.5])
 #%
 #%%
 # plot wri_f[0,mov_starts[i]:mov_ends[i]] for all mov_starts
@@ -61,16 +63,33 @@ ax_3d    = fig.add_subplot(221,projection='3d')
 ax_3dr  = fig.add_subplot(222,projection='3d')
 ax_tv   = fig.add_subplot(223) 
 
+vectors = []
+total_distances = []
+magnitudes = []
+
 for i in range(len(reachr.mov_starts)):
   
   ind_m = ind_mmoves[i]
   inds = range(ind_m[0],ind_m[1])
   ax_3d.plot(reachr.wri_f[0,inds], reachr.wri_f[1,inds], reachr.wri_f[2,inds])
   
-  tgt_start = reachr.wri_f[:,inds[0]]
-  tgt_end = reachr.wri_f[:,inds[-1]]
+  tgt_start = reachr.wri_f[:,inds[0]]/1000
+  tgt_end = reachr.wri_f[:,inds[-1]]/1000
   ax_3d.plot(tgt_start[0], tgt_start[1], tgt_start[2], 'ro')
   ax_3d.plot(tgt_end[0], tgt_end[1], tgt_end[2], 'go')
+  
+  x, y, z = tgt_start
+  start_distance = math.sqrt(x**2 + y**2 + z**2)
+  x2, y2, z2 = tgt_end
+  end_distance = math.sqrt(x2**2 + y2**2 + z2**2)
+  #total = end_distance - start_distance
+  vector = tgt_end - tgt_start
+
+  magnitude = np.linalg.norm(vector) #magnitude is correct
+
+  # Append the total to the list
+  #total_distances.append(total)
+  magnitudes.append(magnitude)
   
   R2calxy = np.array([[-0.689578  , -0.72413109, -0.01078618],
        [ 0.66407996, -0.62631008, -0.40833013],
@@ -81,7 +100,7 @@ for i in range(len(reachr.mov_starts)):
   wri_f = reachr.wri_f[:,inds]
   wri_f = wri_f - sho0
   # now rotate the vectors
-  wri_r = np.dot(R2calxy.T,wri_f)
+  wri_r = np.dot(R2calxy,wri_f)
   ax_3dr.plot(wri_r[0,:], wri_r[1,:], wri_r[2,:])
   tgt_start = wri_r[:,0]
   tgt_end = wri_r[:,-1]
