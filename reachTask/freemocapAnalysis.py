@@ -539,7 +539,7 @@ def get_list_subject_files(sname,datapath):
     fnames.append(fname_full)
 
   elif sname == 'paper03_heel':
-    name_session = "session_2024-03-22_14_28_34"
+    name_session = "session_2024-03-22_11_58_00"
     name_recording = "recording_12_07_20_gmt-6__heel"
     name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
@@ -568,7 +568,7 @@ def get_list_subject_files(sname,datapath):
      
   elif sname == 'paper07_heel':
     name_session     = "session_2024-03-25_11_57_43"
-    name_recording   = "recording_12_07_24_gmt-6__heel"
+    name_recording   = "recording_13_07_24_gmt-6__heel"
     name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
