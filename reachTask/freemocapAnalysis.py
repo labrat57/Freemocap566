@@ -293,7 +293,7 @@ def get_list_subject_files(sname,datapath):
   elif sname == 'paper05': # hazel
 
     name_session     = "session_2024-03-22_11_58_00"
-    name_recording   = "recording_12_02_00_gmt-6__hazeltrial1"
+    name_recording   = "recording_13_27_10_gmt-6__hazeltrial1"
     name_file        = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
