@@ -213,10 +213,8 @@ def get_list_subject_files(sname,datapath):
   fnames = []
   
   if sname == 'who':
-    print("ro03, na, le, je, ro, cal_romnov10, cal_jernov10, hpl_trial1,2,3,4,5")
-    print("but, mostly je and ro are clean, everything else noisy.")
-    
-
+    print("paper0x, where x is 1-8; ro03 (could also be made paper08), na, le, je, ro, cal_romnov10, cal_jernov10, hpl_trial1,2,3,4,5")
+  
   elif sname == 'paper07': #osman
     name_session     = "session_2024-03-25_11_57_43"
     name_recording   = "recording_13_35_45_gmt-6__osmantrial1"
@@ -225,26 +223,32 @@ def get_list_subject_files(sname,datapath):
     fnames.append(fname_full)
 
     name_recording   = "recording_13_37_51_gmt-6__osmantrial2"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_40_04_gmt-6__osmantrial3"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_42_16_gmt-6__osmantrial4"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_45_06_gmt-6__osmantrial5"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_48_23_gmt-6__osmantrial6"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_51_39_gmt-6__osmantrial7"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
      
@@ -257,26 +261,32 @@ def get_list_subject_files(sname,datapath):
     fnames.append(fname_full)
 
     name_recording   = "recording_13_52_14_gmt-6__kiratrial2"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_54_25_gmt-6__kiratrial3"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_56_31_gmt-6__kiratrial4"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_59_29_gmt-6__kiratrial5"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_14_02_54_gmt-6__kiratrial6"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_14_06_14_gmt-6__kiratrial7"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
@@ -289,24 +299,29 @@ def get_list_subject_files(sname,datapath):
     fnames.append(fname_full)
 
     name_recording   = "recording_13_29_33_gmt-6__hazeltrial2"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_31_50_gmt-6__hazeltrial3"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_33_54_gmt-6__hazeltrial4"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     # missing trial 5
 
     name_recording   = "recording_13_41_01_gmt-6__hazeltrial6"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_45_00_gmt-6__hazeltrial7"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
@@ -318,26 +333,32 @@ def get_list_subject_files(sname,datapath):
     fnames.append(fname_full)
 
     name_recording   = "recording_12_54_52_gmt-6__trial2"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_12_56_54_gmt-6__trial3"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_12_59_13_gmt-6__trial4"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_02_09_gmt-6__trial5"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_05_42_gmt-6__trial6"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording   = "recording_13_09_05_gmt-6__trial7"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
@@ -352,22 +373,27 @@ def get_list_subject_files(sname,datapath):
 
     # the trial 2 for pat did not save
     name_recording  = "recording_14_29_47_gmt-6__pattrial3"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording  = "recording_14_31_57_gmt-6__pattrial4"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording  = "recording_14_34_54_gmt-6__pattrial5"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording  = "recording_14_38_17_gmt-6__pattrial6"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording  = "recording_14_41_52_gmt-6__pattrial7"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
@@ -381,26 +407,32 @@ def get_list_subject_files(sname,datapath):
     fnames.append(fname_full)
 
     name_recording = "recording_11_34_30_gmt-6__trial2"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording = "recording_11_38_37_gmt-6__trial3"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording = "recording_11_40_57_gmt-6__trial4"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording = "recording_11_45_38_gmt-6__trial5"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording = "recording_11_51_20_gmt-6__trial6"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording = "recording_11_55_52_gmt-6__trial7"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
@@ -414,33 +446,39 @@ def get_list_subject_files(sname,datapath):
     fnames.append(fname_full)
 
     name_recording  = "recording_15_12_50_gmt-6__annatrial2"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
     
     name_recording  = "recording_15_14_58_gmt-6__annatrial3"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording  = "recording_15_17_08_gmt-6__annatrial4"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording  = "recording_15_19_55_gmt-6__annatrial5"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording  = "recording_15_23_16_gmt-6__annatrial6"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
     name_recording  = "recording_15_26_35_gmt-6__annatrial7"
+    name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
   #each 'sname' needs 
     # 1. name_session
     # 2. several name_recordings.
-  elif sname == 'ro03':
+  elif (sname == 'ro03') | (sname == 'paper08'): #rom
 
     name_session    = "session_2024-03-19_10_52_13"
     name_recording  = "recording_12_15_43_gmt-6__romeo1"
