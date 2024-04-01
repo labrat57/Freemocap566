@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import butter, filtfilt
+import scipy.io
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
 import sys
@@ -213,7 +214,7 @@ def get_list_subject_files(sname,datapath):
   fnames = []
   
   if sname == 'who':
-    print("paper0x, where x is 1-8; ro03 (could also be made paper08), na, le, je, ro, cal_romnov10, cal_jernov10, hpl_trial1,2,3,4,5")
+    print("paper0x, where x is 1-8, but 5 6 bad. ro03= paper08. Previous: na, le, je, ro, cal_romnov10, cal_jernov10, hpl_trial1,2,3,4,5")
   
   elif sname == 'paper07': #osman
     name_session     = "session_2024-03-25_11_57_43"
@@ -517,7 +518,7 @@ def get_list_subject_files(sname,datapath):
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
-  elif sname == 'ro03_heel':
+  elif (sname == 'ro03_heel') | (sname == 'paper08_heel'):
     name_session    = "session_2024-03-19_10_52_13"
     name_recording  = "recording_11_11_31_gmt-6__heel"
     name_file       = f"{name_recording}_by_trajectory.csv"
@@ -722,3 +723,82 @@ def get_list_subject_files(sname,datapath):
   else:
     print('unknown sname %s' % (sname))
   return fnames
+
+def get_cached_R(sname):
+  current_module_directory = os.path.dirname(__file__)
+  subjname_rot = sname + '_heel'
+  fname_full = os.path.join(current_module_directory,'processed_clicks',subjname_rot + '.mat')
+  if os.path.exists(fname_full):
+    dat = scipy.io.loadmat(fname_full)
+    R = dat["R"]
+    return R
+  else:
+    print('R matrix not found for %s' % (sname))
+    return None
+
+def get_list_conditions(sname):
+  cond = []
+  if sname == 'paper01':
+    cond = ['p','p','f','s', 'l', 'm', 't']
+  elif sname == 'paper02':
+    cond = ['p','p','f','s', 't', 'm', 'l']
+  elif sname == 'paper03':
+    cond = ['p','f','s', 't', 'm', 'l']
+  elif sname == 'paper07':
+    cond = ['p','p','f','s', 'm', 'l', 't']
+  elif sname == 'paper08':
+    cond = ['p','p','f','s', 'l', 'm', 't']
+
+  return cond
+
+def color_from_condition(cond):
+  if cond == 's':
+    return '#deebf7'
+  elif cond == 'p':
+    return '#9ecae1'
+  elif cond == 'f':
+    return '#3182bd'
+  elif cond == 't':
+    return '#efedf5'
+  elif cond == 'm':
+    return '#bcbddc'
+  elif cond == 'l':
+    return '#756bb1'
+
+def index_from_condition(cond):
+  if cond == 's':
+    return 1
+  elif cond == 'p':
+    return 0
+  elif cond == 'f':
+    return 2
+  elif cond == 't':
+    return 3
+  elif cond == 'm':
+    return 4
+  elif cond == 'l':
+    return 5
+
+
+def get_cached_clicks(fname):
+  git_directory = os.path.dirname(__file__)
+  fname_full = os.path.join(git_directory,'processed_clicks',f'{fname[:-4]}' + '_savedclicks.csv')
+  if os.path.exists(fname_full):
+    clickpd = pd.read_csv(fname_full)
+    indices = clickpd['indices'].tolist()
+    
+  else:
+    print('clicks not found for %s' % (sname))
+    indices = None
+  return indices
+
+def get_cached_mainsequence(fname):
+  current_module_directory = os.path.dirname(__file__)
+  fname_full = os.path.join(current_module_directory,'processed_clicks',f'{fname[:-4]}' + '_mainsequence.mat')
+  if os.path.exists(fname_full):
+    ms = scipy.io.loadmat(fname_full)
+    return ()
+  else:
+    print('clicks not found for %s' % (sname))
+    return (None, None, None, None)
+# %%

@@ -7,12 +7,132 @@ import matplotlib.pyplot as plt
 import freemocapAnalysis as fm
 import pandas as pd
 import os
+import statsmodels as sm
+import statsmodels.formula.api as smf
 
-#%%
-def peaks_and_valleys(tv_sub,tv_thresh_mms=80):
-  ind_peaks = []
+class mainSeq():
+  D = []
+  V = []
+  T = []
+
+  def __init__(self, D=[], T=[],V=[]):
+    self.D = D
+    self.V = V
+    self.T = T
+
+def fit_ct(ms, kv = 0.902,kt = 2.264, normV = .3, normT =1.0, verbose = True):
+  """
+  Returns a CT that fits peakspeed V and duration T for distance D simultaneously (D, V, and T [i.e. reach_fmc.mainsequence() output). 
+  
+  Inputs:
+  ms -> mainsequence object.
+  D: np.array
+    the distances of the reaches
+  V: np.array
+    the peak speeds of the reaches
+  T: np.array
+    the duration of the reaches
+
+  Parameters:
+  kv: float, default 0.902
+    coefficient in the speed equation:
+    V = kv*(D .^3 * ct)^(1/4)
+  kt: float, default 2.264
+    coefficient in the time equation:
+    T = kt*(D ./  ct)^(1/4)
+  normV: float, default 0.3
+    normalization factor for V
+  normT: float, default 1.0
+    normalization factor for T
+  
+  Returns:
+  c_t: float
+    the estimate of the cost of time
+  pvalue: float
+    the p-value of the estimate
+  results: statsmodels object
+  f_v: the speed function
+  f_t: the duration function
+
+  Explained math:
+  We think people minimize energy and time.
+  Energy for reaching is Force-rate (i.e. of units M*D/T^3)
+  so the cost function that people minimize is 
+  J(T) = c * M*D/T^3 + c_t*T (for integrated f-rate across time) 
+  then
+  dJdT = c*M*D/T^4 + c_t = 0 
+  rearranging to solve for V = D/T or T, we have two propotionalities:
+  V = kv* CT^1/4 * D ^(3/4)
+  T = kt*(D / CT).^(1/4)
+
+  We would like to solve using ordinary least-squares, i.e A*CT = b.
+  To do this linearly, and scaling V and T errors with normV and normT, 
+  we rearrange: 
+  Aspd = (1/normV)^4 * kv^4*D.^3 
+  bspd = (V ./ normV).^4 
+  Adur = 1./(kt^4 * D) ./normT 
+  bdur = 1./(T ./ normT) 
+  Then stack [Aspd;Adur] and [bspd;bdur] and solve.
+
+  Example:
+  D = np.array([0.1,0.2, 0.3,0.4, 0.5 ,0.60,0.7])
+  T = np.array([0.7,0.75,0.8,0.85,0.90,0.95,1.0])
+  V = np.array([0.3,0.50,0.7,0.90,1.1 ,1.30,1.5])
+  fit_ct(D,V,T)
+  """
+  D = ms.D
+  V = ms.V
+  T = ms.T
+
+  Adur = 1 /(kt**4 * D) / normT
+  bdur = 1 /(T / normT)
+        
+  Aspd = (1/normV)**4 * kv**4 * D**3
+  bspd = (V / normV)**4
+
+  A = np.concatenate((Adur,Aspd))
+  b = np.concatenate((bdur,bspd))
+
+  results = smf.ols('b ~ A -1', data = pd.DataFrame({'A':A,'b':b})).fit()
+  c_t     = results.params.A #our estimate of the cost of time. 
+  pvalue  = results.pvalues.A
+
+  # V = kv* CT^1/4 * D ^(3/4)
+  # T = kt*(D / CT).^(1/4)
+  def f_v(D,ct): return kv*c_t**(1/4)*D**(3/4)
+  def f_t(D,ct): return kt*(1/c_t)**(1/4) * D**(1/4) 
+
+  if verbose:
+    print(results.summary())
+
+  return c_t, pvalue, results, f_v, f_t
+
+def peaks_and_valleys(tv_sub,tv_thresh_mms=80, domanual=False):
+  """
+  Find the peaks and valleys in the speed (i.e. tanvel) data.
+  
+  Each reach-to-grasp is three reaches, each of which have peak speeds.
+  The middle reach is the one we are most interested in because it positions the object.
+  The peaks and valleys are used to define the start and end of the middle reach:
+  the two valleys define the start and end of the middle reach.
+  
+  Inputs:
+  tv_sub: np.array
+    the speed data, in mm/s (as per freemocap, units of mm/s)
+  tv_thresh_mms: float, default 80
+    the threshold for the speed data in mmps
+
+  Returns:
+  ind_peaks: np.array
+    the indices of the peaks
+  ind_valleys: np.array
+    the indices of the valleys
+
+  """
+
+  ind_peaks   = []
   ind_valleys = [] # valleys define the start and end of the middle movement.
-  domanual = False
+
   if tv_sub.shape[0] > 15: # then it cannot be filtered at 2 Hz.
     # for i in range(len(self.mov_starts)):
     tv_sub_f = fm.lowpass(tv_sub,fs=30,cutoff_freq= 2)
@@ -34,7 +154,7 @@ def peaks_and_valleys(tv_sub,tv_thresh_mms=80):
     print("Likely this is a double-click by accident. delete the processedclicks.csv file and try again.")
 
   # currently this does not run. but we could insert a manual flag that checks for each. 
-  if False:
+  if domanual:
     plt.plot(tv_sub)
     # plot with dashed line tv_sub_f
     plt.plot(tv_sub_f, '--', label='lowpass')
@@ -46,12 +166,13 @@ def peaks_and_valleys(tv_sub,tv_thresh_mms=80):
     if answer == 'm':
       domanual = True
   
+  # if we do not have the right number of peaks/valleys, switch to manual.
   if (len(ind_peaks) + len(ind_valleys) != 5) or domanual:
     print("Warning: not enough peaks and valleys found.")
     print("switching to manual.")
     coordinates = []
     # while len(coordinates) is not equal! to 5, not smaller or not larger.
-    while len(coordinates) > 5 or len(coordinates) < 5:
+    while (len(coordinates) + len(coordinates) != 5): 
       print("switching to manual. Click 5 peaks/valleys in sequence, then close the figure.")
       f,ax = plt.subplots()
       plt.plot(tv_sub)
@@ -72,7 +193,7 @@ def peaks_and_valleys(tv_sub,tv_thresh_mms=80):
       ind_valleys = np.array(ind_valleys)
     
     # print that we manually scored correctly
-    print("Five peaks/valleys manually scored.")
+    print("Five (peaks + valleys) manually scored.")
     domanual = False
 
   plt.plot(tv_sub)
@@ -128,7 +249,7 @@ def get_rotmat(data3d):
 # we also typically want to work with the data in numpy arrays, not pandas dataframes.
 # and have the xyz data in a single array, not three separate arrays.
 class reachData:
-  fname = ''
+  fraw_name = ''
   path  = ''
   time = []
   sho_r = []
@@ -154,7 +275,7 @@ class reachData:
 # constructor for reach data, receiving a pandas dataframe
   def __init__(self, fmc:pd.DataFrame, path, sr_fixed = 30.0, cutoff_freq = 12.0):
     self.path = path
-    self.fname = os.path.basename(path)
+    self.fraw_name = os.path.basename(path)
 
     # compute the time vector.
     ts = fmc['timestamp']
@@ -209,7 +330,7 @@ class reachData:
     # if it exists, load it and return the data
     # if it doesn't exist, compute the data and save it to a file
     module_directory = os.path.dirname(__file__)
-    fsave = os.path.join(module_directory,'processed_clicks',f'{self.fname[:-4]}_mainsequence.mat')
+    fsave = os.path.join(module_directory,'processed_clicks',f'{self.fraw_name[:-4]}_mainsequence.mat')
     if os.path.exists(fsave):
       dat = scipy.io.loadmat(fsave)
       return dat['distances'], dat['durations'], dat['peakspeeds'], dat['valleys']
@@ -244,9 +365,9 @@ class reachData:
       cutreaches.append((tzeroed,np.array(self.wri_f[:,inds])))
     return cutreaches
 
-  def click_add_wrist_starts_ends(self, numclicks=-1, sname=None):
+  def click_add_wrist_starts_ends(self, numclicks=-1, do_skip_figs = False):
     
-    sname = self.fname
+    sname = self.fraw_name
     indices = []
     
     ### try to load an existing clicks file first.
@@ -254,12 +375,17 @@ class reachData:
     current_module_path = __file__
     # Directory of the current module
     current_module_directory = os.path.dirname(current_module_path)
-    fnamefull = os.path.join(current_module_directory,'processed_clicks',f'{sname[:-4]}_savedclicks.csv') 
+    fnamefull = os.path.join(current_module_directory,'processed_clicks',f'{self.fraw_name[:-4]}_savedclicks.csv') 
     print(fnamefull)
     if os.path.exists(fnamefull):
       # Load the file
       clickpd = pd.read_csv(fnamefull)
       indices = clickpd['indices'].tolist()
+      if do_skip_figs == True:
+        print("Skipping clicks, using saved clicks.")
+        self.mov_starts = indices[::2]
+        self.mov_ends = indices[1::2]
+        return indices[::2], indices[1::2]
 
     if len(indices)==0:
       fig, ax = plt.subplots(4, 1)
