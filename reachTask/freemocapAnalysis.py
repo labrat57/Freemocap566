@@ -213,11 +213,8 @@ def get_list_subject_files(sname,datapath):
   fnames = []
   
   if sname == 'who':
-    print("ro03, na, le, je, ro, cal_romnov10, cal_jernov10, hpl_trial1,2,3,4,5")
-    print("but, mostly je and ro are clean, everything else noisy.")
-    # jer is doing jer, osman and pat 
-    # ill do kira first
-
+    print("paper0x, where x is 1-8; ro03 (could also be made paper08), na, le, je, ro, cal_romnov10, cal_jernov10, hpl_trial1,2,3,4,5")
+  
   elif sname == 'paper07': #osman
     name_session     = "session_2024-03-25_11_57_43"
     name_recording   = "recording_13_35_45_gmt-6__osmantrial1"
@@ -296,7 +293,7 @@ def get_list_subject_files(sname,datapath):
   elif sname == 'paper05': # hazel
 
     name_session     = "session_2024-03-22_11_58_00"
-    name_recording   = "recording_12_02_00_gmt-6__hazeltrial1"
+    name_recording   = "recording_13_27_10_gmt-6__hazeltrial1"
     name_file        = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
@@ -481,7 +478,7 @@ def get_list_subject_files(sname,datapath):
   #each 'sname' needs 
     # 1. name_session
     # 2. several name_recordings.
-  elif sname == 'ro03':
+  elif (sname == 'ro03') | (sname == 'paper08'): #rom
 
     name_session    = "session_2024-03-19_10_52_13"
     name_recording  = "recording_12_15_43_gmt-6__romeo1"
@@ -542,7 +539,7 @@ def get_list_subject_files(sname,datapath):
     fnames.append(fname_full)
 
   elif sname == 'paper03_heel':
-    name_session = "session_2024-03-22_14_28_34"
+    name_session = "session_2024-03-22_11_58_00"
     name_recording = "recording_12_07_20_gmt-6__heel"
     name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)

@@ -12,11 +12,11 @@ import scipy.io
 from scipy.signal import find_peaks
 
 # if doing raw scoring, this needs to be set to 'rom' or 'jer'
-datapath  = fa.setdatapath("rom") 
+datapath  = fa.setdatapath("jer") 
 
 # file names:
-subjname_rot     = 'ro03_heel'
-subjname_trials  = 'ro03'
+subjname_rot     = 'paper02_heel'
+subjname_trials  = 'paper02'
 
 #### steps:
 ###1. get the rotation matrix from the heel-on-floor trial (either pre-loaded or from clicks). 
@@ -69,7 +69,7 @@ for i in range(len(fnames_triallist)):
   pddata_cur = pd.read_csv(pathname_cur)
   reachr = rf.reachData(pddata_cur,pathname_cur)
 
-  # assign Roation matrix R to the current data.
+  # assign Rotation matrix R to the current data.
   reachr.R = R
   reachr.click_add_wrist_starts_ends()
 
@@ -93,7 +93,7 @@ for i in range(len(fnames_triallist)):
 # score the middle movements using peaks_and_valleys, or manual if it's the wrong number.
 for i in range(len(fnames_triallist)):
   pathname_cur = fnames_triallist[i]
-  print(f'{pathname_cur}: main sequence analysis.')
+  print(f'Main Sequence (speed, duration): iteration {i}; filename {pathname_cur}.')
   pddata_cur = pd.read_csv(pathname_cur)
   reachr = rf.reachData(pddata_cur, path=pathname_cur)
 

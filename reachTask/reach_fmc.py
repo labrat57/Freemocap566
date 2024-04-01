@@ -33,7 +33,8 @@ def peaks_and_valleys(tv_sub,tv_thresh_mms=80):
     print("Warning: not enough data to filter.")
     print("Likely this is a double-click by accident. delete the processedclicks.csv file and try again.")
 
-  if len(ind_valleys) ==5:
+  # currently this does not run. but we could insert a manual flag that checks for each. 
+  if False:
     plt.plot(tv_sub)
     # plot with dashed line tv_sub_f
     plt.plot(tv_sub_f, '--', label='lowpass')
@@ -45,11 +46,12 @@ def peaks_and_valleys(tv_sub,tv_thresh_mms=80):
     if answer == 'm':
       domanual = True
   
-  if (len(ind_peaks) + len(ind_valleys) < 5) or domanual:
+  if (len(ind_peaks) + len(ind_valleys) != 5) or domanual:
     print("Warning: not enough peaks and valleys found.")
     print("switching to manual.")
     coordinates = []
-    while len(coordinates) < 5:
+    # while len(coordinates) is not equal! to 5, not smaller or not larger.
+    while len(coordinates) > 5 or len(coordinates) < 5:
       print("switching to manual. Click 5 peaks/valleys in sequence, then close the figure.")
       f,ax = plt.subplots()
       plt.plot(tv_sub)
@@ -70,7 +72,7 @@ def peaks_and_valleys(tv_sub,tv_thresh_mms=80):
       ind_valleys = np.array(ind_valleys)
     
     # print that we manually scored correctly
-    print("Five peaks/valley scored.")
+    print("Five peaks/valleys manually scored.")
     domanual = False
 
   plt.plot(tv_sub)
@@ -239,7 +241,7 @@ class reachData:
     for imov in range(len(inds_middle_start_end)):
       inds = np.arange(inds_middle_start_end[imov][0],inds_middle_start_end[imov][1])
       tzeroed = self.time[inds] - self.time[inds[0]]
-      cutreaches.append(np.array((tzeroed,self.wri_f[:,inds])))
+      cutreaches.append((tzeroed,np.array(self.wri_f[:,inds])))
     return cutreaches
 
   def click_add_wrist_starts_ends(self, numclicks=-1, sname=None):
