@@ -33,7 +33,7 @@ for isub, subj in enumerate(subnames):
     
     # i use a 'mainSeq' object to wrap the D, V, T together. 
     ms = rf.mainSeq(D = distancelist[0,:]/1000, V = peakspeedlist[0,:]/1000,T = durationlist[0,:])
-    ct,p,stats,fun_v,fun_t = rf.fit_ct(ms)
+    ct,p,stats,fun_v,fun_t = rf.fit_ct(ms,normT = 1.0, normV = .3)
     ps[isub,i] = p
     cts[isub,i] = ct
 
@@ -44,13 +44,15 @@ for isub, subj in enumerate(subnames):
     ax[1,col_plt].plot(ms.D,ms.T,'o',color=c)
     ax[1,col_plt].plot(dline,fun_t(dline,ct),'-',color=c)
 
-    ax[0,col_plt].set_xlim([0,.8])
-    ax[0,col_plt].set_ylim([0, 2])
+    # set the limits. 
+    # if there are outliers, this will be a potential problem.
+    # ax[0,col_plt].set_xlim([0,.8])
+    # ax[0,col_plt].set_ylim([0, 2])
+    # ax[1,col_plt].set_xlim([0,.8])
+    # ax[1,col_plt].set_ylim([0, 2])
+    
     ax[0,col_plt].set_xlabel('Distance (m)')
     ax[0,col_plt].set_ylabel('Peak speed (m/s)')
-
-    ax[1,col_plt].set_xlim([0,.8])
-    ax[1,col_plt].set_ylim([0, 2])
     ax[1,col_plt].set_xlabel('Distance (m)')
     ax[1,col_plt].set_ylabel('Duration (s)')
     f.suptitle(subj)
@@ -64,7 +66,7 @@ for isub, subj in enumerate(subnames):
   f.tight_layout()
   f.show()
 
-# %%
+# display cts.
 np.set_printoptions(suppress=True)
 np.round(cts.T,2)
 # %%

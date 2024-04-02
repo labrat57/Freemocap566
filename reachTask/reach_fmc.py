@@ -70,7 +70,7 @@ def fit_ct(ms, kv = 0.902,kt = 2.264, normV = .3, normT =1.0, verbose = True):
   we rearrange: 
   Aspd = (1/normV)^4 * kv^4*D.^3 
   bspd = (V ./ normV).^4 
-  Adur = 1./(kt^4 * D) ./normT 
+  Adur = (kt^4 * D) ./normT 
   bdur = 1./(T ./ normT) 
   Then stack [Aspd;Adur] and [bspd;bdur] and solve.
 
@@ -84,9 +84,9 @@ def fit_ct(ms, kv = 0.902,kt = 2.264, normV = .3, normT =1.0, verbose = True):
   V = ms.V
   T = ms.T
 
-  Adur = 1 /(kt**4 * D) / normT
-  bdur = 1 /(T / normT)
-        
+  Adur = (T / normT) **4
+  bdur = (kt / normT) **4 * D
+
   Aspd = (1/normV)**4 * kv**4 * D**3
   bspd = (V / normV)**4
 
