@@ -332,7 +332,7 @@ def get_list_subject_files(sname,datapath):
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
-    name_recording   = "recording_12_54_52_gmt-6__trial2"
+    name_recording   = "recording_12_54_42_gmt-6__trial2"
     name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)

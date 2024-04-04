@@ -15,8 +15,8 @@ from scipy.signal import find_peaks
 datapath  = fa.setdatapath("rom") 
 
 # file names:
-subjname_rot     = 'paper05_heel'
-subjname_trials  = 'paper05'
+subjname_rot     = 'paper04_heel'
+subjname_trials  = 'paper04'
 
 #### steps:
 ###1. get the rotation matrix from the heel-on-floor trial (either pre-loaded or from clicks). 
