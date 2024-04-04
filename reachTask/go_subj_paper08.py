@@ -71,7 +71,7 @@ for i in range(len(fnames_triallist)):
 
   # assign Roation matrix R to the current data.
   reachr.R = R
-  reachr.click_add_wrist_starts_ends()
+  reachr.click_add_wrist_starts_ends(os.path.basename(pathname_cur))
 
   f,ax = plt.subplots()
 
@@ -83,7 +83,7 @@ for i in range(len(fnames_triallist)):
   ax.set_ylabel('speed wri (mm/s)')
   ax.set_ylim([0,1500])
   ax.legend(['tanvel_wri', 'Movement Starts', 'Movement Ends'])
-  ax.set_title(reachr.fname)
+  ax.set_title(reachr.fraw_name)
   f.show()
   # pause for input
   input('Press Enter to continue')
