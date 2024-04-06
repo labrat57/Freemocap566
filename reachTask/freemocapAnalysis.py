@@ -739,22 +739,22 @@ def get_cached_R(sname):
 def get_list_conditions(sname):
   cond = []
   if sname == 'paper01':
-    cond = ['p','p','f','s', 'l', 'm', 't']
+    cond = ['p','p2','f','s', 'l', 'm', 't']
   elif sname == 'paper02':
-    cond = ['p','p','f','s', 't', 'm', 'l']
+    cond = ['p','p2','f','s', 't', 'm', 'l']
   elif sname == 'paper03':
     cond = ['p','f','s', 't', 'm', 'l']
   elif sname == 'paper07':
-    cond = ['p','p','f','s', 'm', 'l', 't']
+    cond = ['p','p2','f','s', 'm', 'l', 't']
   elif sname == 'paper08':
-    cond = ['p','p','f','s', 'l', 'm', 't']
+    cond = ['p','p2','f','s', 'l', 'm', 't']
 
   return cond
 
 def color_from_condition(cond):
   if cond == 's':
     return '#deebf7'
-  elif cond == 'p':
+  elif (cond == 'p') | (cond == 'p2'):
     return '#9ecae1'
   elif cond == 'f':
     return '#3182bd'
@@ -767,17 +767,19 @@ def color_from_condition(cond):
 
 def index_from_condition(cond):
   if cond == 's':
-    return 1
+    return 2
   elif cond == 'p':
     return 0
+  elif cond == 'p2':
+    return 1
   elif cond == 'f':
-    return 2
-  elif cond == 't':
     return 3
-  elif cond == 'm':
+  elif cond == 't':
     return 4
-  elif cond == 'l':
+  elif cond == 'm':
     return 5
+  elif cond == 'l':
+    return 6
 
 
 def get_cached_clicks(fname):

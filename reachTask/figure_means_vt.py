@@ -20,8 +20,11 @@ for isub, subj in enumerate(subnames):
     cond = conds[ifl]
     c = fa.color_from_condition(cond)
     i = fa.index_from_condition(cond)
+    
+    # set the column for plotting. we plot p, p2, slow, fast all on one plot; t m b on another. 
+    # these conditions are ordered: p, p2, slow, fast, t, m, b
     col_plt = 0
-    if (i>2) :
+    if (i>fa.index_from_condition('f')) : # we plot p, p2, slow, fast all on one plot; t m b on another. 
       col_plt = 1
 
     pddata            = pd.read_csv(fpath)
@@ -68,5 +71,5 @@ for isub, subj in enumerate(subnames):
 
 # display cts.
 np.set_printoptions(suppress=True)
-np.round(cts.T,2)
+print(np.round(cts.T,2))
 # %%
