@@ -792,6 +792,8 @@ def get_list_conditions(sname):
     cond = ['p','p2','f','s', 'm', 'l', 't']
   elif sname == 'paper08':
     cond = ['p','p2','f','s', 'l', 'm', 't']
+  elif sname == 'paper09':
+    cond = ['p','p2','f','s', 'm', 'l', 't']
 
   return cond
 
