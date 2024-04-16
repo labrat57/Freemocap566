@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 # for fitting data to power law
 import statsmodels.formula.api as smf
 
-subnames = ['paper01','paper02','paper03','paper07','paper08']
+subnames = ['paper01','paper02','paper03','paper07','paper08','paper09']
 
 datapath = fa.setdatapath("jer")
 

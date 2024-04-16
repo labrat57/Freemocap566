@@ -378,7 +378,10 @@ class reachData:
         t0 = self.time[i0]
         tvthreshmms = 200
         tv_greaterthan = np.where(self.tanvel_wri[i0:i1]>200)
-        tshift = self.time[tv_greaterthan[0][0]]
+        if tv_greaterthan[0].shape[0] > 0:
+          tshift = self.time[tv_greaterthan[0][0]]
+        else:
+          tshift = 0
 
         alph = .3
         if i == i_whichmax:
