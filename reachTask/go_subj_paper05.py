@@ -12,7 +12,7 @@ import scipy.io
 from scipy.signal import find_peaks
 
 # if doing raw scoring, this needs to be set to 'rom' or 'jer'
-datapath  = fa.setdatapath("jer") 
+datapath  = fa.setdatapath("rom") 
 
 # file names:
 subjname_rot     = 'paper05_heel'

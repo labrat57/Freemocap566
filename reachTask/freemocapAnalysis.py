@@ -216,6 +216,43 @@ def get_list_subject_files(sname,datapath):
   if sname == 'who':
     print("paper0x, where x is 1-8, but 5 6 bad. ro03= paper08. Previous: na, le, je, ro, cal_romnov10, cal_jernov10, hpl_trial1,2,3,4,5")
   
+  elif sname == 'paper09': #jake
+    name_session     = "session_2024-04-03_15_04_11"
+    name_recording   = "recording_15_08_20_gmt-6__trial1"
+    name_file        = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+    name_recording   = "recording_15_10_24_gmt-6__trial2"
+    name_file        = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+    name_recording   = "recording_15_12_58_gmt-6__trial3"
+    name_file        = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+    name_recording   = "recording_15_18_17_gmt-6__trial4"
+    name_file        = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+    name_recording   = "recording_15_21_28_gmt-6__trial5"
+    name_file        = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+    name_recording   = "recording_15_24_55_gmt-6__trial6"
+    name_file        = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
+    name_recording   = "recording_15_28_22_gmt-6__trial7"
+    name_file        = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+
   elif sname == 'paper07': #osman
     name_session     = "session_2024-03-25_11_57_43"
     name_recording   = "recording_13_35_45_gmt-6__osmantrial1"
@@ -333,7 +370,7 @@ def get_list_subject_files(sname,datapath):
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
 
-    name_recording   = "recording_12_54_52_gmt-6__trial2"
+    name_recording   = "recording_12_54_42_gmt-6__trial2"
     name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)
@@ -570,6 +607,13 @@ def get_list_subject_files(sname,datapath):
   elif sname == 'paper07_heel':
     name_session     = "session_2024-03-25_11_57_43"
     name_recording   = "recording_13_07_24_gmt-6__heel"
+    name_file       = f"{name_recording}_by_trajectory.csv"
+    fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
+    fnames.append(fname_full)
+  
+  elif sname == 'paper09_heel':
+    name_session     = "session_2024-04-03_15_04_11"
+    name_recording   = "recording_15_35_24_gmt-6__heel"
     name_file       = f"{name_recording}_by_trajectory.csv"
     fname_full      = os.path.join(datapath, name_session,name_recording, name_file)
     fnames.append(fname_full)

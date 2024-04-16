@@ -20,6 +20,30 @@ class mainSeq():
     self.V = V
     self.T = T
 
+def draw_body_parts(R,pddata,indrange,names):
+  ''''
+  def draw_body_parts
+  wip: meant to handle arbirary body parts to be drawn as segment.
+  '''
+  sh_l = R @ np.array([pddata['left_shoulder_x'][indrange[0:1]],pddata['left_shoulder_y'][indrange[0:1]],pddata['left_shoulder_z'][indrange[0:1]]])
+  sh_r = R @ np.array([pddata['right_shoulder_x'][indrange[0:1]],pddata['right_shoulder_y'][indrange[0:1]],pddata['right_shoulder_z'][indrange[0:1]]])
+  hi_r = R @ np.array([pddata['right_hip_x'][indrange[0:1]],pddata['right_hip_y'][indrange[0:1]],pddata['right_hip_z'][indrange[0:1]]])
+  hi_l = R @ np.array([pddata['left_hip_x'][indrange[0:1]],pddata['left_hip_y'][indrange[0:1]],pddata['left_hip_z'][indrange[0:1]]])
+
+  sh_l = sh_l/1000
+  sh_r = sh_r/1000
+  hi_r = hi_r/1000
+  hi_l = hi_l/1000
+
+  sh_lz = sh_l - sho_fix
+  sh_rz = sh_r - sho_fix
+  hi_rz = hi_r - sho_fix
+  hi_lz = hi_l - sho_fix
+
+  ax.plot(np.concatenate((sh_lz[0,0:1],sh_rz[0,0:1],hi_rz[0,0:1],hi_lz[0,0:1],sh_lz[0,0:1])),
+          np.concatenate((sh_lz[1,0:1],sh_rz[1,0:1],hi_rz[1,0:1],hi_lz[1,0:1],sh_lz[1,0:1])),
+          np.concatenate((sh_lz[2,0:1],sh_rz[2,0:1],hi_rz[2,0:1],hi_lz[2,0:1],sh_lz[2,0:1])),c='k',linewidth=3)
+
 def fit_ct(ms, kv = 0.902,kt = 2.264, normV = .3, normT =1.0, verbose = True):
   """
   Returns a CT that fits peakspeed V and duration T for distance D simultaneously (D, V, and T [i.e. reach_fmc.mainsequence() output). 
@@ -62,6 +86,7 @@ def fit_ct(ms, kv = 0.902,kt = 2.264, normV = .3, normT =1.0, verbose = True):
   then
   dJdT = c*M*D/T^4 + c_t = 0 
   rearranging to solve for V = D/T or T, we have two propotionalities:
+  
   V = kv* CT^1/4 * D ^(3/4)
   T = kt*(D / CT).^(1/4)
 
@@ -70,10 +95,13 @@ def fit_ct(ms, kv = 0.902,kt = 2.264, normV = .3, normT =1.0, verbose = True):
   we rearrange: 
   Aspd = (1/normV)^4 * kv^4*D.^3 
   bspd = (V ./ normV).^4 
+  
   Adur = (kt^4 * D) ./normT 
   bdur = 1./(T ./ normT) 
-  Then stack [Aspd;Adur] and [bspd;bdur] and solve.
 
+  Then stack [Aspd;Adur] and [bspd;bdur] and solve.
+  { check: T^4 = kt^4*D/ct ; T^4*ct = kt^4*D 
+  
   Example:
   D = np.array([0.1,0.2, 0.3,0.4, 0.5 ,0.60,0.7])
   T = np.array([0.7,0.75,0.8,0.85,0.90,0.95,1.0])
@@ -85,7 +113,7 @@ def fit_ct(ms, kv = 0.902,kt = 2.264, normV = .3, normT =1.0, verbose = True):
   T = ms.T
 
   Adur = (T / normT) **4
-  bdur = (kt / normT) **4 * D
+  bdur = (kt) **4 * D # note jer removed kt/normT here.
 
   Aspd = (1/normV)**4 * kv**4 * D**3
   bspd = (V / normV)**4
@@ -172,7 +200,7 @@ def peaks_and_valleys(tv_sub,tv_thresh_mms=80, domanual=False):
     print("switching to manual.")
     coordinates = []
     # while len(coordinates) is not equal! to 5, not smaller or not larger.
-    while (len(coordinates) + len(coordinates) != 5): 
+    while (len(ind_peaks) + len(ind_valleys) != 5): 
       print("switching to manual. Click 5 peaks/valleys in sequence, then close the figure.")
       f,ax = plt.subplots()
       plt.plot(tv_sub)
@@ -191,10 +219,10 @@ def peaks_and_valleys(tv_sub,tv_thresh_mms=80, domanual=False):
       ind_valleys = [int(np.round(ind_valleys[i])) for i in range(2)]
       ind_peaks = np.array(ind_peaks)
       ind_valleys = np.array(ind_valleys)
-    
-    # print that we manually scored correctly
-    print("Five (peaks + valleys) manually scored.")
-    domanual = False
+      
+      # print that we manually scored correctly
+      print("Five (peaks + valleys) manually scored.")
+      domanual = False
 
   plt.plot(tv_sub)
   # plot with dashed line tv_sub_f
@@ -321,10 +349,16 @@ class reachData:
     self.tanvel_sho = np.sqrt(self.vel_sho[0,:]**2 + self.vel_sho[1,:]**2 + self.vel_sho[2,:]**2)
   
   def mainsequence(self):
+    '''
+    computes mainsequence() data [D, V, T: Distance, Velocity, Time (duration)] for the reach data file.
+
+    '''
     distances = list()
     durations = list()
     peakspeeds = list()
-    valleys    = list() # note the valleys are the middle movement, the one we sort of want most.
+    valleys    = list()
+    threepeaks = list()
+    # note the valleys are the middle movement, the one we sort of want most.
 
     # check for cached file _mainsequence.mat
     # if it exists, load it and return the data
@@ -333,6 +367,34 @@ class reachData:
     fsave = os.path.join(module_directory,'processed_clicks',f'{self.fraw_name[:-4]}_mainsequence.mat')
     if os.path.exists(fsave):
       dat = scipy.io.loadmat(fsave)
+      i_whichmax = np.argmax(dat['peakspeeds'])
+      tv_ff = fm.lowpass(self.tanvel_wri,fs=30,cutoff_freq= 2)
+      ind_peaks = dat['threepeaks']
+      ind_valleys = dat['valleys']
+      f,ax = plt.subplots()
+      for i in range(len(self.mov_starts)):
+        i0 = self.mov_starts[i]
+        i1 = self.mov_ends[i]
+        t0 = self.time[i0]
+        tvthreshmms = 200
+        tv_greaterthan = np.where(self.tanvel_wri[i0:i1]>200)
+        tshift = self.time[tv_greaterthan[0][0]]
+
+        alph = .3
+        if i == i_whichmax:
+          # alpha solid
+          alph = 1
+
+        plt.plot(self.time[i0:i1]-t0-tshift,    self.tanvel_wri[i0:i1],alpha = alph)
+        # plt.plot(self.time[i0:i1]-t0,       tv_ff[i0:i1], '--', label='lowpass')
+        ip = ind_peaks[i]
+        iv = ind_valleys[i]
+        plt.plot(self.time[ip]-t0-tshift,   self.tanvel_wri[ip], "kx",alpha = alph)
+        plt.plot(self.time[iv]-t0-tshift, self.tanvel_wri[iv], "ko",alpha = alph)
+
+      plt.show()
+      ffig = os.path.join(module_directory,'figures',f'{self.fraw_name[:-4]}_peaksvalleys.pdf')
+      f.savefig(ffig)
       return dat['distances'], dat['durations'], dat['peakspeeds'], dat['valleys']
     
     else:
@@ -350,10 +412,12 @@ class reachData:
         distances.append(dist_wrist)
         peakspeeds.append(max(tv[ind_valleys[0]:ind_valleys[1]]))
         durations.append(time[ind_valleys[1]] - time[ind_valleys[0]])
-        #append to valleys the ind_valleys, corrected for the start of the reach
+        #append to valleys the ind_valleys, relative not to the start of the reach but the whole file.
+        # (then can use ind valleys and ind_peaks to cut when we want.)
         valleys.append(ind_valleys + self.mov_starts[i])
+        threepeaks.append(ind_peaks + self.mov_starts[i])
         # save the data to a file
-      scipy.io.savemat(fsave,{'distances':distances,'durations':durations,'peakspeeds':peakspeeds,'valleys':valleys})
+      scipy.io.savemat(fsave,{'distances':distances,'durations':durations,'peakspeeds':peakspeeds,'valleys':valleys,'threepeaks':threepeaks})
       return np.array(distances), np.array(durations), np.array(peakspeeds),valleys
 
   def cut_middle_movements(self,inds_middle_start_end):

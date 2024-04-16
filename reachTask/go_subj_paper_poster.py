@@ -15,8 +15,8 @@ from scipy.signal import find_peaks
 datapath  = fa.setdatapath("jer") 
 
 # file names:
-subjname_rot     = 'paper03_heel'
-subjname_trials  = 'paper03'
+subjname_rot     = 'paper02_heel'
+subjname_trials  = 'paper02'
 
 #### steps:
 ###1. get the rotation matrix from the heel-on-floor trial (either pre-loaded or from clicks). 
@@ -42,8 +42,8 @@ rhip = np.array([pddata["right_hip_x"],pddata["right_hip_y"],pddata["right_hip_z
 # take the mean of the two hip detections, each is a 3, array
 mhip = np.mean([lhip,rhip],axis=0)
 # check to see if we have computed a rotation matrix.
-git_directory = os.path.dirname(__file__)
-fname_full = os.path.join(git_directory,'processed_clicks',subjname_rot + '.mat')
+curfile_directory = os.path.dirname(__file__)
+fname_full = os.path.join(curfile_directory,'processed_clicks',subjname_rot + '.mat')
 if os.path.exists(fname_full):
   dat = scipy.io.loadmat(fname_full)
   R = dat["R"]
@@ -114,32 +114,19 @@ for i in range(len(fnames_triallist)):
   #%% Step 5: plot mainsequence results.
   # plot in m/s the distance, duration, and speed. 
   #% plot the dist peakspeed
-  fig,ax = plt.subplots(2,1)
-  #set plot size
-  fig.set_size_inches(2,2)
-  ax[0].plot(distancelist/1000.0,durationlist,'o')
-  ax[0].set_xlabel('Distance (m)')
-  ax[0].set_ylabel('Duration (s)')
-  #set xlimit
-  ax[0].set_xlim([0,.5])
-  ax[0].set_ylim([0,1.0])
-  ax[1].plot(distancelist/1000,peakspeedlist/1000,'o')
-  ax[1].set_xlabel('Distance (m)')
-  ax[1].set_ylabel('Peak Speed (m/s)')
-  ax[1].set_xlim([0,0.5])
-  ax[1].set_ylim([0,1.5])
-  #%
+   #%
   #%% Plot 
   # 1. tangential velocity 
   # 2. hand position in 3D
   # 3. rotated hand position in 3D
   fig = plt.figure()
-  fig.set_size_inches(2,2)
+  fig.set_size_inches(7,7)
 
   tgts = list()
-  ax_3d    = fig.add_subplot(221,projection='3d')
-  ax_3dr  = fig.add_subplot(222,projection='3d')
-  ax_tv   = fig.add_subplot(223) 
+  ax_3dr  = fig.add_subplot(221,projection='3d')
+  ax_tv   = fig.add_subplot(222) 
+  ax_v    = fig.add_subplot(223) 
+  ax_t    = fig.add_subplot(224) 
 
   for i in range(len(tpllist_time_wrist)):
     ind01      = indlist_middle_mvmnt_start_end[i] # the indices of the middle movement. can use to get sho/finger any other column.
@@ -147,11 +134,8 @@ for i in range(len(fnames_triallist)):
     t         = tpllist_time_wrist[i][0]
     movwri    = tpllist_time_wrist[i][1]
     
-    ax_3d.plot(movwri[0,:], movwri[1,:], movwri[2,:])    
     tgt_start = movwri[:,0]
     tgt_end = movwri[:,-1]
-    ax_3d.plot(tgt_start[0], tgt_start[1], tgt_start[2], 'ro')
-    ax_3d.plot(tgt_end[0], tgt_end[1], tgt_end[2], 'go')
         
     # zero the movements to the first shoulder position of the first movement.
     sho0 = reachr.sho_f[:,reachr.mov_starts[0:1]]
@@ -164,19 +148,45 @@ for i in range(len(fnames_triallist)):
     tgt_end = wri_r[:,-1]
     ax_3dr.plot(tgt_start[0], tgt_start[1], tgt_start[2], 'ro')
     ax_3dr.plot(tgt_end[0], tgt_end[1], tgt_end[2], 'go')
-    ax_3dr.set_xlabel('x (r+)')
-    ax_3dr.set_ylabel('y (f+)')
-    ax_3dr.set_zlabel('z (u+)')
-    ax_3dr.set_xlim([-200,800])
+    ax_3dr.set_xlabel('x (m)')
+    ax_3dr.set_ylabel('y (m)')
+    ax_3dr.set_zlabel('z (m)')
+    ax_3dr.set_xlim([-500,800])
     ax_3dr.set_ylim([-200,800])
     ax_3dr.set_zlim([-500,500])
 
     t = reachr.time[inds]
     t = t-t[0]
     
-    ax_tv.plot(t,reachr.tanvel_wri[inds])
+    tv = reachr.tanvel_wri
+    tv_f = fa.lowpass(tv, cutoff_freq = 10)
+    ax_tv.plot(t,tv_f[inds]/1000)
     # end loop through movements  
+  ax_tv.set_xlabel('Time (s)',fontsize = 24)
+  ax_tv.set_ylabel('Speed (m/s)',fontsize = 24)
+  
+  ax_t.plot(distancelist/1000.0,durationlist,'o')
+  ax_t.set_xlabel('Distance (m)',fontsize = 24)
+  ax_t.set_ylabel('Duration (s)',fontsize = 24)
+  #set xlimit
+  ax_t.set_xlim([0,.8])
+  ax_t.set_ylim([0,1.5])
+  ax_v.plot(distancelist/1000,peakspeedlist/1000,'o')
+  ax_v.set_xlabel('Distance (m)',fontsize = 24)
+  ax_v.set_ylabel('Peak Speed (m/s)',fontsize = 24)
+  ax_v.set_xlim([0,0.8])
+  ax_v.set_ylim([0,1.5])
 
-  plt.xlabel('Time')
-  plt.ylabel('wri_f')
-  plt.show()
+for label in (ax_t.get_xticklabels() + ax_t.get_yticklabels()+ax_v.get_xticklabels()+ax_v.get_yticklabels()+ax_tv.get_xticklabels() + ax_tv.get_yticklabels()):
+  label.set_fontsize(18)
+  
+  # shift the position of ax_3dr slightly left
+  f.tight_layout()
+  pos1 = ax_3dr.get_position() # get the original position
+  pos2 = [pos1.x0 - 0.1, pos1.y0, pos1.width, pos1.height]
+  
+  
+  # plt.show()
+  fbase = os.path.basename(pathname_cur)
+  fsave = os.path.join(curfile_directory,'figures',fbase[:-4] + '_summary.pdf')
+  fig.savefig(fsave)

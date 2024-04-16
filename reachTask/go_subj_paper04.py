@@ -12,11 +12,11 @@ import scipy.io
 from scipy.signal import find_peaks
 
 # if doing raw scoring, this needs to be set to 'rom' or 'jer'
-datapath  = fa.setdatapath("jer") 
+datapath  = fa.setdatapath("rom") 
 
 # file names:
-subjname_rot     = 'paper03_heel'
-subjname_trials  = 'paper03'
+subjname_rot     = 'paper04_heel'
+subjname_trials  = 'paper04'
 
 #### steps:
 ###1. get the rotation matrix from the heel-on-floor trial (either pre-loaded or from clicks). 
@@ -71,7 +71,7 @@ for i in range(len(fnames_triallist)):
 
   # assign Rotation matrix R to the current data.
   reachr.R = R
-  reachr.click_add_wrist_starts_ends(os.path.basename(pathname_cur))
+  reachr.click_add_wrist_starts_ends()
 
   f,ax = plt.subplots()
 
@@ -83,7 +83,7 @@ for i in range(len(fnames_triallist)):
   ax.set_ylabel('speed wri (mm/s)')
   ax.set_ylim([0,1500])
   ax.legend(['tanvel_wri', 'Movement Starts', 'Movement Ends'])
-  ax.set_title(reachr.fraw_name)
+  ax.set_title(reachr.fname)
   f.show()
   # pause for input
   input('Press Enter to continue')
@@ -109,7 +109,6 @@ for i in range(len(fnames_triallist)):
 
   # each element in this list is a tuple! time, then wrist.
   tpllist_time_wrist = reachr.cut_middle_movements(indlist_middle_mvmnt_start_end)
-
   
   #%% Step 5: plot mainsequence results.
   # plot in m/s the distance, duration, and speed. 

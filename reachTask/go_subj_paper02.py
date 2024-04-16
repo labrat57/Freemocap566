@@ -103,7 +103,7 @@ for i in range(len(fnames_triallist)):
   # assign Roation matrix R to the current data.
   reachr.R = R
   # read in the saved starts/ends.
-  reachr.click_add_wrist_starts_ends(sname=fname_cur)
+  reachr.click_add_wrist_starts_ends()
 
   distancelist, durationlist, peakspeedlist, indlist_middle_mvmnt_start_end = reachr.mainsequence()
 
@@ -167,7 +167,7 @@ for i in range(len(fnames_triallist)):
     ax_3dr.set_xlabel('x (r+)')
     ax_3dr.set_ylabel('y (f+)')
     ax_3dr.set_zlabel('z (u+)')
-    ax_3dr.set_xlim([-200,800])
+    ax_3dr.set_xlim([-500,800])
     ax_3dr.set_ylim([-200,800])
     ax_3dr.set_zlim([-500,500])
 
