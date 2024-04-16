@@ -12,7 +12,7 @@ import scipy.io
 from scipy.signal import find_peaks
 
 # if doing raw scoring, this needs to be set to 'rom' or 'jer'
-datapath  = fa.setdatapath("rom") 
+datapath  = fa.setdatapath("jer") 
 
 # file names:
 subjname_rot     = 'paper09_heel'
@@ -103,7 +103,7 @@ for i in range(len(fnames_triallist)):
   # assign Roation matrix R to the current data.
   reachr.R = R
   # read in the saved starts/ends.
-  reachr.click_add_wrist_starts_ends(sname=fname_cur)
+  reachr.click_add_wrist_starts_ends()
 
   distancelist, durationlist, peakspeedlist, indlist_middle_mvmnt_start_end = reachr.mainsequence()
 
