@@ -25,7 +25,7 @@ fname = os.path.join(datadir,'PhaseSpace-2024-01-25','trial3.c3d')
 reader = c3d.Reader(open(fname, 'rb'))
 npoints = 0
 for i, p, analog in reader.read_frames():
-  print('frame {}: point {}, analog {}'.format(i, p.shape, analog.shape))
+  #print('frame {}: point {}, analog {}'.format(i, p.shape, analog.shape))
   npoints = i
   p.shape
 
@@ -64,7 +64,7 @@ fname = os.path.join(datadir,'PhaseSpace-2024-01-25','trial3.c3d')
 reader = c3d.Reader(open(fname, 'rb'))
 npoints = 0
 for i, p, analog in reader.read_frames():
-  print('frame {}: point {}, analog {}'.format(i, p.shape, analog.shape))
+  #print('frame {}: point {}, analog {}'.format(i, p.shape, analog.shape))
   npoints = i
   p.shape
 
@@ -116,3 +116,11 @@ plt.xlabel('Displacement')
 plt.ylabel('Tangential Velocity')
 plt.title('Tangential Velocity vs Displacement Puck1')
 plt.show()
+
+#%%
+#%%
+# this will be the freemocap code that i use to get plots of the data from the same trial.
+
+
+
+# %%

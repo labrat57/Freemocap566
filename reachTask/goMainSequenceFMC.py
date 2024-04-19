@@ -12,13 +12,16 @@ from scipy.signal import find_peaks
 # then you can do importlib.reload(rf) to reload the module
 
 ## here are hopefully the only two things you need to set.
+
 sname = 'ro_0125_Y' # at the moment, 'je' and 'ro' are the only clean datasets that i can tell. and ro is short. 
 datapath = fa.setdatapath("rom") 
+print(datapath)
+
 ## /here are hopefully the only two things you need to set.
 
 fnames = fa.get_list_subject_files(sname,datapath)
 pddata = pd.read_csv(fnames[0])
-reachr = rf.reachData(pddata)
+reachr = rf.reachData(pddata, datapath)
 
 # click the starts and ends
 reachr.click_add_wrist_starts_ends(numclicks=24,sname=sname)

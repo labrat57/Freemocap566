@@ -31,8 +31,8 @@ def addReachPath():
 def setdatapath(str_who):
   # add the path reachTask
   # get the name of the directory containing this file:
-  if str_who == 'rom':
-    str_datadir = r"C:\Users\romyu\OneDrive - University of Calgary\Freemocap 2023\freemocap_data\recording_sessions"
+  if str_who == "rom":
+    str_datadir = "/Users/romyu/OneDrive - University of Calgary/Freemocap 2023/freemocap_data/recording_sessions"
   elif str_who == "jer":
     str_datadir = "/Users/jeremy/OneDrive - University of Calgary/Freemocap 2023/freemocap_data/recording_sessions"
   else:
@@ -51,6 +51,8 @@ def resample_data(time, data, sr):
   # Resample the data using linear interpolation
   data_resamp = np.zeros((3, len(time_resamp)))
   for i in range(data.shape[0]):
+    if len(time) != len(data[i, :]):
+      print(f"Mismatched lengths at i={i}: length of time: {len(time)}, length of data[{i}]: {len(data[i, :])}")
     data_resamp[i, :] = np.interp(time_resamp, time, data[i, :])
   return time_resamp, data_resamp
 
